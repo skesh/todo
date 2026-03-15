@@ -18,6 +18,10 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     const [channel, ...omit] = args
     return ipcRenderer.invoke(channel, ...omit)
   },
+  store: {
+    get: (key: string) => ipcRenderer.invoke('store:get', key),
+    set: (key: string, value: unknown) => ipcRenderer.invoke('store:set', key, value),
+  },
 
   // You can expose other APTs you need here.
   // ...
