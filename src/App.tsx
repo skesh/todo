@@ -1,36 +1,28 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import { Todo } from './interfaces/todo'
+import { ITodo } from './interfaces/todo'
+import Todo from './components/Todo';
+import TodoList from './components/TodoList';
 
 function App() {
-  const [items, setItems] = useState<Todo[]>([]);
+  const [items, setItems] = useState<ITodo[]>([]);
   useEffect(() => {
     const load = async () => {
-      const data = await window.ipcRenderer.store.get('items') as Todo[];
+      const data = await window.ipcRenderer.store.get('items') as ITodo[];
       setItems(data || []);
     };
     load();
   }, []);
 
-  function addTodo(todo: Todo) {
-    const newItems = [...items, todo];
-    setItems(newItems);
-    window.ipcRenderer.store.set('items', newItems);
-  }
+  // function addTodo(todo: ITodo) {
+  //   const newItems = [...items, todo];
+  //   setItems(newItems);
+  //   window.ipcRenderer.store.set('items', newItems);
+  // }
 
   return (
     <>
-      {items.length}
-
-      <div className="card">
-        <button onClick={() => addTodo({ title: 'new', done: false, created: null })}>
-          add todo
-        </button>
-      </div>
-
-      {items.map(i => (
-        <div>{i.title} {i.done ? '-' : '+'}</div>
-      ))}
+      <TodoList todos={items}></TodoList>
     </>
   )
 }
