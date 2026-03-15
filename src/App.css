@@ -7,3 +7,25 @@
   /* text-align: center; */
   width: 100%;
 }
+
+.bodyList {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.todoInput {
+  height: 36px;
+  border: 1px solid orange;
+  border-radius: 8px;
+  background-color: unset;
+  padding: 0 8px;
+
+  /* input { */
+  /*   width: 100%; */
+  /*   background-color: unset; */
+  /*   border: unset; */
+  /*   height: 28px; */
+  /* } */
+}
