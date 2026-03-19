@@ -6,6 +6,7 @@ import TodoList from './components/TodoList';
 function App() {
   const [items, setItems] = useState<ITodo[]>([]);
   const [todoTitle, setTodoTitle] = useState<string>('');
+  const [isEditable, setIsEditable] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -15,6 +16,18 @@ function App() {
       setItems(data || []);
     };
     load();
+  }, []);
+
+  useEffect(() => {
+    window.ipcRenderer.on('shortcut:new-todo', () => {
+      if (!isEditable) {
+        inputRef.current?.focus();
+        console.log(isEditable);
+        setIsEditable(true);
+        console.log(isEditable);
+        console.log('focus');
+      }
+    });
   }, []);
 
   function addTodo(todo: ITodo) {

@@ -1,13 +1,12 @@
-import { app, BrowserWindow } from 'electron'
-import { fileURLToPath } from 'node:url'
-import path from 'node:path'
-import { Todo } from '../src/interfaces/todo'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import Store from 'electron-store'
-import { ipcMain } from 'electron'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { ITodo } from '../src/interfaces/todo'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const store = new Store<{ items: Todo[] }>({
+const store = new Store<{ items: ITodo[] }>({
   name: 'Todos',
   defaults: { items: [] }
 })
@@ -39,6 +38,13 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.mjs'),
     },
   })
+
+  win.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'o') {
+      win?.webContents.send('shortcut:new-todo');
+      event.preventDefault();
+    }
+  });
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
@@ -79,4 +85,10 @@ ipcMain.handle('store:set', (_event, key: string, value: unknown) => {
   return store.set(key, value);
 })
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  createWindow();
+  // globalShortcut.register('o', () => {
+  //   // Создать новое todo
+  //   win?.webContents.send('shortcut:new-todo');
+  // });
+})
