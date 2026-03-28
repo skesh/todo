@@ -1,12 +1,13 @@
 import styles from "./todo.module.css";
 import { ITodo } from "../interfaces/todo";
 
-function Todo(todo: ITodo) {
+function Todo({ todo, isActive, index }: { todo: ITodo, isActive: boolean, index: number }) {
   return (
     <>
-      <div className={styles.todo}>
+      <div className={`${styles.todo} ${isActive && styles.active}`}>
+        {/* TODO: убрать лишний див */}
         <div className={styles.todoBody}>
-          {todo.title} {todo.created ? '+' : '-'}
+          {index} {todo.title} {todo.created ? '+' : '-'}
         </div>
       </div>
     </>
