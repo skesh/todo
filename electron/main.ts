@@ -39,13 +39,6 @@ function createWindow() {
     },
   })
 
-  win.webContents.on('before-input-event', (event, input) => {
-    if (input.key === 'o') {
-      win?.webContents.send('shortcut:new-todo');
-      event.preventDefault();
-    }
-  });
-
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())

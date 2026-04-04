@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { ITodo } from "../interfaces/todo";
 import Todo from "./Todo"
 import styles from "./TodoList.module.css"
+import AddTodo from "./AddTodo";
 
 function TodoList() {
   const [todoIndex, setTodoIndex] = useState<number>(-1);
   const [showAddTodo, setShowAddTodo] = useState<boolean>(false);
   const [items, setItems] = useState<ITodo[]>([]);
-  const [isEditable, setIsEditable] = useState<boolean>(false);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const addTodoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -20,32 +20,57 @@ function TodoList() {
   }, []);
 
   useEffect(() => {
-    window.ipcRenderer.on('shortcut:new-todo', () => {
-      if (!isEditable) {
-        inputRef.current?.focus();
-        setIsEditable(true);
-      }
-    });
-  }, []);
-
-
-  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'j') {
-        e.preventDefault();
-        setTodoIndex(prev => {
-          return prev < (items.length - 1) ? prev + 1 : (items.length - 1)
-        });
+        if (!showAddTodo) {
+          e.preventDefault();
+          setTodoIndex(prev => prev < (items.length - 1) ? prev + 1 : (items.length - 1));
+        }
         return;
       }
+
       if (e.key === 'k') {
-        e.preventDefault();
-        setTodoIndex(prev => prev > 0 ? prev - 1 : 0);
+        if (!showAddTodo) {
+          e.preventDefault();
+          setTodoIndex(prev => prev > 0 ? prev - 1 : 0);
+        }
+        return;
       }
+
+      if (e.key === 'o') {
+        if (!showAddTodo) {
+          e.preventDefault();
+          setShowAddTodo(true);
+        }
+        return;
+      }
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        if (showAddTodo) {
+          setShowAddTodo(false);
+        }
+      }
+
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [items]);
+  }, [items, showAddTodo]);
+
+  useEffect(() => {
+    if (showAddTodo) {
+      addTodoInputRef.current?.focus();
+    }
+  }, [showAddTodo]);
+
+  const handleAddTodo = (todo: ITodo) => {
+    setItems(prev => {
+      const newItems = [...prev, todo];
+      window.ipcRenderer.store.set('items', newItems);
+      setShowAddTodo(false);
+      return newItems;
+    })
+  }
 
   return (
     <>
@@ -56,6 +81,8 @@ function TodoList() {
             index={index}
             isActive={index === todoIndex} />
         ))}
+
+        {showAddTodo ?? <AddTodo inputRef={addTodoInputRef} onAdd={handleAddTodo} />}
       </div>
     </>
   )

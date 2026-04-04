@@ -1,35 +1,28 @@
 import { useState } from "react";
 import { ITodo } from "../interfaces/todo";
 
-function AddTodo({ onAdd }: { onAdd: () => void }) {
-  const [todoTitle, setTodoTitle] = useState<string>('');
+interface AddTodoProps {
+  onAdd: (todo: ITodo) => void;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
+}
 
-  function addTodo(todo: ITodo) {
-    const newItems = [...items, todo];
-    setItems(newItems);
-    window.ipcRenderer.store.set('items', newItems);
-  }
+export default function AddTodo({ onAdd, inputRef }: AddTodoProps) {
+  const [title, setTitle] = useState('');
 
-  function handleSubmit() {
-    if (todoTitle) {
-      addTodo({ title: todoTitle, done: false, created: new Date() });
-      setTodoTitle('')
-      inputRef.current?.blur();
+  function handleAdd() {
+    if (title.trim()) {
+      onAdd({ title, done: false, created: new Date() });
+      // setTitle('');
     }
   }
 
-  function dropFocus() {
-    inputRef.current?.blur();
-  }
-
   return (
-    <>
-      <input className="todoInput" value={todoTitle}
-        onChange={(e) => setTodoTitle(e.target.value)}
-        onKeyDown={(e) => { if (e.key === 'Enter') { handleSubmit() } else if (e.key === 'Escape') dropFocus() }}
-        ref={inputRef} />
-    </>
-  )
+    <input
+      className="todoInput"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+      ref={inputRef}
+    />
+  );
 }
-
-export default AddTodo
