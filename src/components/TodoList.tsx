@@ -9,8 +9,11 @@ function TodoList() {
   const [showAddTodo, setShowAddTodo] = useState<boolean>(false);
   const [items, setItems] = useState<ITodo[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const lastKeyRef = useRef<string | null>(null);
+  const lastTimeRef = useRef<number>(0);
 
   const addTodoInputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -22,6 +25,9 @@ function TodoList() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const now = Date.now();
+      const timeDiff = now - lastTimeRef.current;
+
       if (e.key === 'j') {
         if (!showAddTodo) {
           e.preventDefault();
@@ -47,7 +53,7 @@ function TodoList() {
       }
 
       if (e.key === 'e') {
-        if (!showAddTodo) {
+        if (!showAddTodo && !editMode) {
           e.preventDefault();
           setShowAddTodo(true);
           setEditMode(true);
@@ -56,8 +62,26 @@ function TodoList() {
       }
 
       if (e.key === 'd') {
-        e.preventDefault();
-        handleDelete();
+        if (!showAddTodo && !editMode) {
+          e.preventDefault();
+          handleDelete();
+        }
+        return
+      }
+
+      if (e.key === 'G') {
+        if (!showAddTodo && !editMode) {
+          e.preventDefault();
+          setTodoIndex(0);
+        }
+        return
+      }
+
+      if (e.key === 'g' && lastKeyRef.current === 'g' && timeDiff < 300) {
+        if (!showAddTodo && !editMode) {
+          e.preventDefault();
+          setTodoIndex(items.length - 1);
+        }
         return
       }
 
@@ -66,6 +90,9 @@ function TodoList() {
         handleEscape();
         return;
       }
+
+      lastKeyRef.current = e.key;
+      lastTimeRef.current = now;
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
@@ -76,6 +103,24 @@ function TodoList() {
       addTodoInputRef.current?.focus();
     }
   }, [showAddTodo]);
+
+  useEffect(() => {
+    if (todoIndex >= 0 && listRef.current) {
+      const container = listRef.current;
+      const elements = container.querySelectorAll('[data-todo]');
+      const target = elements[todoIndex] as HTMLElement;
+
+      if (target) {
+        const containerRect = container.getBoundingClientRect();
+        const targetRect = target.getBoundingClientRect();
+
+        // Если элемент вне видимой области - скроллим
+        if (targetRect.top < containerRect.top || targetRect.bottom > containerRect.bottom) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+  }, [todoIndex])
 
   const handleEscape = () => {
     if (showAddTodo) setShowAddTodo(false);
@@ -88,6 +133,8 @@ function TodoList() {
       : [...items, todo]
     handleEscape();
     saveItems(newItems);
+    const newIndex = newItems.findIndex(i => i.created === todo.created);
+    setTodoIndex(newIndex);
   }
 
   const handleDelete = () => {
@@ -103,10 +150,11 @@ function TodoList() {
 
   return (
     <>
-      <div className={styles.todoList}>
+      <div className={styles.todoList} ref={listRef}>
         {items.map((t, index) => (
           <Todo
             todo={t}
+            key={index}
             isActive={index === todoIndex} />
         ))}
 

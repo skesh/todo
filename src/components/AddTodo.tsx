@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ITodo } from "../interfaces/todo";
+import styles from "./AddTodo.module.css";
 
 interface AddTodoProps {
   onAdd: (todo: ITodo) => void;
@@ -18,13 +19,13 @@ export default function AddTodo({ onAdd, inputRef, todo }: AddTodoProps) {
 
   function handleAdd() {
     if (title.trim()) {
-      onAdd({ title, done: false, created: new Date() });
+      onAdd({ title, done: false, created: new Date().toString() });
     }
   }
 
   return (
     <input
-      className="todoInput"
+      className={styles.todoInput}
       value={title}
       onChange={(e) => setTitle(e.target.value)}
       onKeyDown={(e) => e.key === 'Enter' && handleAdd()}

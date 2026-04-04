@@ -1,5 +1,5 @@
 export interface ITodo {
   title: string,
-  created: Date | null,
+  created: string | null,
   done: boolean,
 }
