@@ -8,6 +8,7 @@ function TodoList() {
   const [todoIndex, setTodoIndex] = useState<number>(-1);
   const [showAddTodo, setShowAddTodo] = useState<boolean>(false);
   const [items, setItems] = useState<ITodo[]>([]);
+  const [editMode, setEditMode] = useState<boolean>(false);
 
   const addTodoInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,13 +46,20 @@ function TodoList() {
         return;
       }
 
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        if (showAddTodo) {
-          setShowAddTodo(false);
+      if (e.key === 'e') {
+        if (!showAddTodo) {
+          e.preventDefault();
+          setShowAddTodo(true);
+          setEditMode(true);
         }
+        return;
       }
 
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleEscape();
+      }
+      return;
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
@@ -63,11 +71,18 @@ function TodoList() {
     }
   }, [showAddTodo]);
 
+  const handleEscape = () => {
+    if (showAddTodo) setShowAddTodo(false);
+    if (editMode) setEditMode(false);
+  }
+
   const handleAddTodo = (todo: ITodo) => {
     setItems(prev => {
-      const newItems = [...prev, todo];
+      const newItems = editMode
+        ? [...prev.map((i, index) => index === todoIndex ? todo : i)]
+        : [...prev, todo]
       window.ipcRenderer.store.set('items', newItems);
-      setShowAddTodo(false);
+      handleEscape();
       return newItems;
     })
   }
@@ -82,7 +97,9 @@ function TodoList() {
             isActive={index === todoIndex} />
         ))}
 
-        {showAddTodo && <AddTodo inputRef={addTodoInputRef} onAdd={handleAddTodo} />}
+        {showAddTodo && <AddTodo inputRef={addTodoInputRef}
+          onAdd={handleAddTodo}
+          todo={editMode ? items[todoIndex] : undefined} />}
       </div>
     </>
   )
