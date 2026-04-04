@@ -82,7 +82,7 @@ function TodoList() {
             isActive={index === todoIndex} />
         ))}
 
-        {showAddTodo ?? <AddTodo inputRef={addTodoInputRef} onAdd={handleAddTodo} />}
+        {showAddTodo && <AddTodo inputRef={addTodoInputRef} onAdd={handleAddTodo} />}
       </div>
     </>
   )
