@@ -107,7 +107,6 @@ function TodoList() {
         {items.map((t, index) => (
           <Todo
             todo={t}
-            index={index}
             isActive={index === todoIndex} />
         ))}
 
