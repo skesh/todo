@@ -55,15 +55,21 @@ function TodoList() {
         return;
       }
 
+      if (e.key === 'd') {
+        e.preventDefault();
+        handleDelete();
+        return
+      }
+
       if (e.key === 'Escape') {
         e.preventDefault();
         handleEscape();
+        return;
       }
-      return;
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [items, showAddTodo]);
+  }, [items, showAddTodo, todoIndex]);
 
   useEffect(() => {
     if (showAddTodo) {
@@ -77,14 +83,22 @@ function TodoList() {
   }
 
   const handleAddTodo = (todo: ITodo) => {
-    setItems(prev => {
-      const newItems = editMode
-        ? [...prev.map((i, index) => index === todoIndex ? todo : i)]
-        : [...prev, todo]
-      window.ipcRenderer.store.set('items', newItems);
-      handleEscape();
-      return newItems;
-    })
+    const newItems = editMode
+      ? [...items.map((i, index) => index === todoIndex ? todo : i)]
+      : [...items, todo]
+    handleEscape();
+    saveItems(newItems);
+  }
+
+  const handleDelete = () => {
+    const newItems = items.filter((_, index) => index !== todoIndex);
+    if (todoIndex === newItems.length) setTodoIndex(todoIndex - 1);
+    saveItems(newItems);
+  }
+
+  const saveItems = (items: ITodo[]) => {
+    setItems(items);
+    window.ipcRenderer.store.set('items', items);
   }
 
   return (
