@@ -6,16 +6,17 @@ interface AddTodoProps {
   onAdd: (todo: ITodo) => void;
   todo?: ITodo;
   inputRef?: React.RefObject<HTMLInputElement | null>;
+  mode: 'add' | 'edit' | null;
 }
 
-export default function AddTodo({ onAdd, inputRef, todo }: AddTodoProps) {
+export default function AddTodo({ onAdd, inputRef, todo, mode }: AddTodoProps) {
   const [title, setTitle] = useState('');
 
   useEffect(() => {
-    if (todo) {
+    if (todo && mode === 'edit') {
       setTitle(todo.title)
     }
-  }, [todo])
+  }, [todo, mode])
 
   function handleAdd() {
     if (title.trim()) {
