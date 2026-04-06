@@ -13,9 +13,9 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-
   useEffect(() => {
     inputRef.current?.focus()
+
     if (todo && mode === 'edit') {
       setTitle(todo.title)
     }

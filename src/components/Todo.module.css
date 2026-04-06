@@ -1,13 +1,3 @@
-.todo {
-  display: flex;
-  flex-shrink: 0;
-  height: 38px;
-  border: 1px solid grey;
-  border-radius: 8px;
-  align-items: center;
-  padding: 0 8px;
-}
-
 .active {
   border: 1px solid deeppink;
 }

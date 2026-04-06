@@ -1,11 +1,10 @@
 import { useEffect, useRef } from "react";
 import { ITodo } from "../interfaces/todo";
-import keybindings from "../keybindings/keybindings";
 import { useTodoStore } from "../store/todosStore";
 import AddTodo from "./AddTodo";
 import Todo from "./Todo";
 import styles from "./TodoList.module.css";
-import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
 
 function TodoList() {
   const items = useTodoStore((s) => s.items);
@@ -15,8 +14,6 @@ function TodoList() {
   const mode = useTodoStore((s) => s.mode);
 
   const listRef = useRef<HTMLDivElement>(null);
-
-  keybindings();
 
   useEffect(() => {
     if (activeIndex >= 0 && listRef.current) {
@@ -64,7 +61,7 @@ function TodoList() {
           <DrawerContent>
             <DrawerHeader>
               <DrawerTitle>New Todo</DrawerTitle>
-              {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
+              <DrawerDescription>This action cannot be undone.</DrawerDescription>
             </DrawerHeader>
             <DrawerFooter>
               <AddTodo
