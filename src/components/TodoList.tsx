@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 import { ITodo } from "../interfaces/todo";
-import Todo from "./Todo"
-import styles from "./TodoList.module.css"
-import AddTodo from "./AddTodo";
-import { useTodoStore } from "../store/todosStore";
 import keybindings from "../keybindings/keybindings";
+import { useTodoStore } from "../store/todosStore";
+import AddTodo from "./AddTodo";
+import Todo from "./Todo";
+import styles from "./TodoList.module.css";
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
 
 function TodoList() {
   const items = useTodoStore((s) => s.items);
@@ -13,16 +14,9 @@ function TodoList() {
   const setItems = useTodoStore((s) => s.setItems);
   const mode = useTodoStore((s) => s.mode);
 
-  const addTodoInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   keybindings();
-
-  useEffect(() => {
-    if (mode) {
-      addTodoInputRef.current?.focus();
-    }
-  }, [mode]);
 
   useEffect(() => {
     if (activeIndex >= 0 && listRef.current) {
@@ -66,11 +60,24 @@ function TodoList() {
             isActive={index === activeIndex} />
         ))}
 
-        {mode && <AddTodo inputRef={addTodoInputRef}
-          onAdd={handleAddTodo}
-          todo={items[activeIndex]}
-          mode={mode}
-        />}
+        <Drawer open={!!mode}>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>New Todo</DrawerTitle>
+              {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
+            </DrawerHeader>
+            <DrawerFooter>
+              <AddTodo
+                onAdd={handleAddTodo}
+                todo={items[activeIndex]}
+                mode={mode}
+              />
+              {/* <DrawerClose> */}
+              {/*   <Button variant="outline">Cancel</Button> */}
+              {/* </DrawerClose> */}
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
       </div>
     </>
   )

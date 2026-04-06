@@ -34,13 +34,17 @@ export default function keybindings() {
 
       if (e.key === 'o') {
         if (!mode) {
-          setMode('add');
+          e.stopPropagation()
+          e.preventDefault()
+          setMode('add')
         }
         return;
       }
 
       if (e.key === 'i') {
         if (!mode) {
+          e.stopPropagation()
+          e.preventDefault()
           setMode('edit');
         }
         return;

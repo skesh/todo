@@ -1,18 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ITodo } from "../interfaces/todo";
 import styles from "./AddTodo.module.css";
 
 interface AddTodoProps {
   onAdd: (todo: ITodo) => void;
   todo?: ITodo;
-  inputRef?: React.RefObject<HTMLInputElement | null>;
-  mode: 'add' | 'edit' | null;
+  mode: 'add' | 'edit' | false;
 }
 
-export default function AddTodo({ onAdd, inputRef, todo, mode }: AddTodoProps) {
+export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
   const [title, setTitle] = useState('');
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+
   useEffect(() => {
+    inputRef.current?.focus()
     if (todo && mode === 'edit') {
       setTitle(todo.title)
     }
