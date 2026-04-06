@@ -57,7 +57,6 @@ function TodoList() {
 
   return (
     <>
-      <span>{mode}</span>
       <div className={styles.todoList} ref={listRef}>
 
         {items.length > 0 && items.map((t, index) => (
