@@ -1,30 +1,44 @@
 "use client";
 
-import { useState, useRef, KeyboardEvent } from "react";
+import { useState, useRef, KeyboardEvent, useEffect } from "react";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-const SUGGESTED_TAGS = ["react", "typescript", "nextjs", "tailwind", "shadcn"];
+interface TagsInputProps {
+  tags: string[];
+  onChange: (i: string[]) => void;
+  suggestedTags: string[];
+}
 
-export function TagInput() {
-  const [tags, setTags] = useState<string[]>([]);
+export function TagInput({ tags, suggestedTags, onChange }: TagsInputProps) {
+  const [allTags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [open, setOpen] = useState(false);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const suggestions = SUGGESTED_TAGS.filter(
-    (t) => !tags.includes(t) && t.includes(inputValue.toLowerCase())
+  const suggestions = suggestedTags.filter(
+    (t) => !allTags.includes(t) && t.includes(inputValue.toLowerCase())
   );
-  const canCreate = inputValue.trim() && !SUGGESTED_TAGS.includes(inputValue.trim()) && !tags.includes(inputValue.trim());
+  const canCreate = inputValue.trim() && !suggestedTags.includes(inputValue.trim()) && !allTags.includes(inputValue.trim());
+
+  useEffect(() => {
+    if (tags?.length > 0) {
+      setTags(tags)
+    }
+  }, [tags])
 
   const addTag = (tag: string) => {
     const t = tag.trim();
-    if (t && !tags.includes(t)) setTags((prev) => [...prev, t]);
-    setInputValue("");
-    setOpen(false);
-    inputRef.current?.focus();
+    if (t && !allTags.includes(t)) {
+      setTags((prev) => [...prev, t]);
+      setInputValue("");
+      setOpen(false);
+      inputRef.current?.focus();
+    }
+    onChange(allTags)
   };
 
   const removeTag = (tag: string) => setTags((prev) => prev.filter((t) => t !== tag));
@@ -34,8 +48,9 @@ export function TagInput() {
       e.preventDefault();
       addTag(inputValue);
     }
-    if (e.key === "Backspace" && !inputValue && tags.length) {
+    if (e.key === "Backspace" && !inputValue && allTags.length) {
       setTags((prev) => prev.slice(0, -1));
+      onChange(allTags)
     }
   };
 
@@ -46,7 +61,7 @@ export function TagInput() {
           className="flex flex-wrap gap-1.5 min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm cursor-text focus-within:ring-2 focus-within:ring-ring"
           onClick={() => inputRef.current?.focus()}
         >
-          {tags.map((tag) => (
+          {allTags.map((tag) => (
             <Badge key={tag} variant="secondary" className="gap-1">
               {tag}
               <X
@@ -61,7 +76,7 @@ export function TagInput() {
             onChange={(e) => { setInputValue(e.target.value); setOpen(true); }}
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
-            placeholder={tags.length === 0 ? "Добавить тег..." : ""}
+            placeholder={allTags.length === 0 ? "Добавить тег..." : ""}
             className="flex-1 min-w-24 bg-transparent outline-none placeholder:text-muted-foreground"
           />
         </div>

@@ -46,6 +46,7 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
       setRepeat(todo.repeat)
       setCreated(todo.created)
       setDone(todo.done)
+      console.log(todo)
     }
   }, [todo, mode])
 
@@ -70,8 +71,7 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
 
       <Field>
         <Label htmlFor="tags">Tags</Label>
-        <TagInput
-        ></TagInput>
+        <TagInput tags={tags} suggestedTags={["react", "typescript", "nextjs", "tailwind", "shadcn"]} onChange={setTags} />
       </Field>
 
       <div className="flex gap-4">
@@ -80,13 +80,11 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
           <Input value={date} />
         </Field >
 
-        {/* <div className="flex-col"> */}
         <ToggleGroup type="single" value={repeat} onValueChange={setRepeat} className={styles.repeatContainer}>
           {repeatOptions.map((option) => (
             <ToggleGroupItem className={cn((repeat === option ? styles.activeItem : ''), 'items-end')} value={option}>{option}</ToggleGroupItem>
           ))}
         </ToggleGroup>
-        {/* </div> */}
       </div >
 
       <Field>
@@ -104,7 +102,6 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
           <FlameIcon className="group-data-[state=on]/toggle:fill-foreground" />
           High Priority
         </Toggle>
-
       </div>
     </>
   );

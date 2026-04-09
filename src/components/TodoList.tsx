@@ -59,10 +59,10 @@ function TodoList() {
 
         <Drawer open={!!mode}>
           <DrawerContent>
-            <DrawerHeader>
-              {/* <DrawerTitle>New Todo</DrawerTitle> */}
-              {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
-            </DrawerHeader>
+            {/* <DrawerHeader> */}
+            {/* <DrawerTitle>New Todo</DrawerTitle> */}
+            {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
+            {/* </DrawerHeader> */}
             <DrawerFooter>
               <AddTodo
                 onAdd={handleAddTodo}
