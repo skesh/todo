@@ -5,12 +5,14 @@ export interface TodoState {
   items: ITodo[],
   activeIndex: number,
   mode: 'add' | 'edit' | false,
+  isFiltred: boolean,
   initialized: boolean,
   initialize: () => Promise<void>,
   setItems: (items: ITodo[]) => void,
   setIndex: (index: number) => void,
   deleteActiveTodo: () => void,
   setMode: (mode: 'add' | 'edit' | false) => void,
+  toogleFilter: () => void,
 }
 
 export const useTodoStore = create<TodoState>((set, get) => ({
@@ -18,6 +20,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   activeIndex: -1,
   initialized: false,
   mode: false,
+  isFiltred: true,
 
   initialize: async () => {
     if (get().initialized) return;
@@ -47,5 +50,10 @@ export const useTodoStore = create<TodoState>((set, get) => ({
     }
     set({ items: newItems })
   },
+
+  toogleFilter: () => {
+    const { isFiltred } = get()
+    set({ isFiltred: !isFiltred })
+  }
 })
 )

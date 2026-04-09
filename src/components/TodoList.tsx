@@ -4,7 +4,8 @@ import { useTodoStore } from "../store/todosStore";
 import AddTodo from "./AddTodo";
 import Todo from "./Todo";
 import styles from "./TodoList.module.css";
-import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from "./ui/drawer";
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
+import { useFiltredTodos } from "@/hooks/useFiltredTodos";
 
 function TodoList() {
   const items = useTodoStore((s) => s.items);
@@ -12,6 +13,7 @@ function TodoList() {
   const setIndex = useTodoStore((s) => s.setIndex);
   const setItems = useTodoStore((s) => s.setItems);
   const mode = useTodoStore((s) => s.mode);
+  const filtredItems = useFiltredTodos()
 
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +52,7 @@ function TodoList() {
     <>
       <div className={styles.todoList} ref={listRef}>
 
-        {items.length > 0 && items.map((t, index) => (
+        {filtredItems.length > 0 && filtredItems.map((t, index) => (
           <Todo
             todo={t}
             key={index}
@@ -59,10 +61,10 @@ function TodoList() {
 
         <Drawer open={!!mode}>
           <DrawerContent>
-            {/* <DrawerHeader> */}
-            {/* <DrawerTitle>New Todo</DrawerTitle> */}
-            {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
-            {/* </DrawerHeader> */}
+            <DrawerHeader hidden={true}>
+              <DrawerTitle>Title</DrawerTitle>
+              <DrawerDescription>Description</DrawerDescription>
+            </DrawerHeader>
             <DrawerFooter>
               <AddTodo
                 onAdd={handleAddTodo}

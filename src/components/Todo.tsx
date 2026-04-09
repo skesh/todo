@@ -1,9 +1,9 @@
+import { cn } from "@/lib/utils";
 import { CircleIcon } from "lucide-react";
 import { ITodo } from "../interfaces/todo";
 import styles from "./todo.module.css";
 import { Badge } from "./ui/badge";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "./ui/item";
-import { cn } from "@/lib/utils";
 
 function Todo({ todo, isActive }: { todo: ITodo, isActive: boolean }) {
   return (
