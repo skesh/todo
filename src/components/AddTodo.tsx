@@ -77,7 +77,7 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
       <div className="flex gap-4">
         <Field>
           <Label>Date</Label>
-          <Input value={date} />
+          <Input value={date} onChange={(e) => setDate(e.target.value)} />
         </Field >
 
         <ToggleGroup type="single" value={repeat} onValueChange={setRepeat} className={styles.repeatContainer}>
