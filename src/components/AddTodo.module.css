@@ -1,9 +1,9 @@
-.todoInput {
-  display: flex;
-  flex-shrink: 0;
-  height: 36px;
-  border: 1px solid orange;
-  border-radius: 8px;
-  background-color: unset;
-  padding: 0 8px;
+.activeItem {
+  background-color: red !important;
+  color: white !important;
+}
+
+.repeatContainer {
+  align-items: flex-end;
+  gap: 8px;
 }

@@ -1,5 +1,13 @@
 export interface ITodo {
   title: string,
-  created: string | null,
+  description: string,
+  tags: string[],
+  priority: boolean,
+  date: string | undefined,
+  endDate: string | null,
+
+  repeat: string | undefined,
+
+  created: string,
   done: boolean,
 }

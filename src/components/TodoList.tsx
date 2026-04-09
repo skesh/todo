@@ -4,7 +4,7 @@ import { useTodoStore } from "../store/todosStore";
 import AddTodo from "./AddTodo";
 import Todo from "./Todo";
 import styles from "./TodoList.module.css";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from "./ui/drawer";
 
 function TodoList() {
   const items = useTodoStore((s) => s.items);
@@ -60,8 +60,8 @@ function TodoList() {
         <Drawer open={!!mode}>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>New Todo</DrawerTitle>
-              <DrawerDescription>This action cannot be undone.</DrawerDescription>
+              {/* <DrawerTitle>New Todo</DrawerTitle> */}
+              {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
             </DrawerHeader>
             <DrawerFooter>
               <AddTodo

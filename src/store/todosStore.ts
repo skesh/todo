@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { ITodo } from "../interfaces/todo";
 
-interface TodoState {
+export interface TodoState {
   items: ITodo[],
   activeIndex: number,
   mode: 'add' | 'edit' | false,
