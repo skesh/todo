@@ -3,23 +3,18 @@ import Store from 'electron-store'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { ITodo } from '../src/interfaces/todo'
+import { IProject } from '@/interfaces/project'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const store = new Store<{ items: ITodo[] }>({
+const store = new Store<{ items: ITodo[], projects: IProject[] }>({
   name: 'Todos',
-  defaults: { items: [] }
+  defaults: {
+    items: [],
+    projects: []
+  }
 })
 
-// The built directory structure
-//
-// ├─┬─┬ dist
-// │ │ └── index.html
-// │ │
-// │ ├─┬ dist-electron
-// │ │ ├── main.js
-// │ │ └── preload.mjs
-// │
 process.env.APP_ROOT = path.join(__dirname, '..')
 
 // 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x

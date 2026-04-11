@@ -43,27 +43,17 @@ export const useTodoStore = create<TodoState>((set, get) => ({
 
   editItemById: (id: string, item: ITodo) => {
     const { items, setItems } = get()
-
     const newArr = [...items].map(i => i.id === id ? item : i)
     setItems(newArr)
   },
 
-  setActiveId: (activeId: string | null) => {
-    set({ activeId })
-  },
-
-  setMode: (mode) => {
-    set({ mode })
-  },
+  setActiveId: (activeId: string | null) => set({ activeId }),
+  setMode: (mode) => set({ mode }),
 
   deleteActiveTodo: () => {
     const { activeId, items, setItems } = get();
     setItems(items.filter((item) => item.id !== activeId))
   },
 
-  toogleFilter: () => {
-    const { isFiltred } = get()
-    set({ isFiltred: !isFiltred })
-  }
-})
-)
+  toogleFilter: () => set(state => ({ isFiltred: !state.isFiltred }))
+}))

@@ -3,14 +3,17 @@ import { useTodoStore } from "@/store/todosStore";
 import { EyeIcon } from "lucide-react";
 import { Badge } from "./ui/badge.tsx";
 import { Toggle } from "./ui/toggle.tsx";
+import { SidebarTrigger } from "./ui/sidebar.tsx";
 
-export default function Toolbar() {
+export default function Toolbar({ sidebarToogle }: { sidebarToogle: () => void }) {
   const isFiltred = useTodoStore((s) => s.isFiltred);
   const toogleFilter = useTodoStore((s) => s.toogleFilter)
   const tags = useTags()
 
   return (
     <div className='flex items-center gap-4 justify-between px-2 py-2 shrink-0'>
+      <SidebarTrigger onClick={() => sidebarToogle()} />
+
       <Toggle onClick={toogleFilter} pressed={isFiltred} className='gap-2'>
         <EyeIcon className="group-data-[state=on]/toggle:fill-foreground" />
         {isFiltred ? 'hidden' : 'show'}

@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Footer from './components/Footer.tsx';
 import TodoList from './components/TodoList';
 import Toolbar from './components/Toolbar';
+import { SidebarInset, SidebarProvider } from './components/ui/sidebar.tsx';
 import { useTodoStore } from './store/todosStore';
-import Footer from './components/Footer.tsx';
+import { AppSidebar } from './components/AppSidebar.tsx';
+import { useProjectStore } from './store/projectsStore.ts';
 
 function App() {
-  const initialize = useTodoStore((s) => s.initialize);
+  const [open, setOpen] = useState(false)
+  const initializeProjects = useProjectStore((s) => s.initialize)
+  const initializeTodos = useTodoStore((s) => s.initialize)
 
   useEffect(() => {
-    initialize();
+    initializeTodos()
+    initializeProjects()
   }, []);
 
   useEffect(() => {
@@ -18,11 +24,18 @@ function App() {
   }, []);
 
   return (
-    <div className='flex flex-col h-screen'>
-      <Toolbar />
-      <TodoList />
-      <Footer />
-    </div>
+    <SidebarProvider open={open}>
+      <AppSidebar />
+      <SidebarInset>
+        {/* <div className="flex flex-col flex-1 overflow-hidden"> */}
+        <Toolbar sidebarToogle={() => setOpen(!open)} />
+        <div className="flex-1 overflow-y-auto">
+          <TodoList />
+        </div>
+        <Footer />
+        {/* </div> */}
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
 
