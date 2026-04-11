@@ -2,7 +2,7 @@ import { useFiltredTodos } from "@/hooks/useFiltredTodos";
 import keybindings from "@/keybindings/keybindings";
 import { useEffect, useRef, useState } from "react";
 import { useTodoStore } from "../store/todosStore";
-import AddTodo from "./AddTodo";
+import EditTodo from "./EditTodo";
 import Todo from "./Todo";
 import styles from "./TodoList.module.css";
 import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
@@ -60,7 +60,7 @@ function TodoList() {
               <DrawerDescription>Description</DrawerDescription>
             </DrawerHeader>
             <DrawerFooter>
-              <AddTodo todo={items[activeIndex]} mode={mode} />
+              <EditTodo todo={items[activeIndex]} mode={mode} />
               {/* <DrawerClose> */}
               {/*   <Button variant="outline">Cancel</Button> */}
               {/* </DrawerClose> */}

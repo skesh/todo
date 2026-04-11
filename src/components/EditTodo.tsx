@@ -1,25 +1,25 @@
 import { TodoState, useTodoStore } from "@/store/todosStore";
 import { FlameIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { ITodo } from "../interfaces/todo";
-import styles from "./AddTodo.module.css";
-import { TagInput } from "./ui-custom/TagInput";
-import { Field } from "./ui/field";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
+import { ITodo } from "../interfaces/todo.ts";
+import styles from "./EditTodo.module.css";
+import { TagInput } from "./ui-custom/TagInput.tsx";
+import { Field } from "./ui/field.tsx";
+import { Input } from "./ui/input.tsx";
+import { Label } from "./ui/label.tsx";
+import { Textarea } from "./ui/textarea.tsx";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group.tsx";
 import { Toggle } from "./ui/toggle.tsx";
 import { cn } from "@/lib/utils.ts";
 import { useTags } from "@/hooks/useTags.tsx";
 import { nanoid } from 'nanoid';
 
-interface AddTodoProps {
+interface EditTodoProps {
   todo?: ITodo;
   mode: TodoState['mode'];
 }
 
-export default function AddTodo({ todo, mode }: AddTodoProps) {
+export default function EditTodo({ todo, mode }: EditTodoProps) {
   const [id, setId] = useState(nanoid())
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
