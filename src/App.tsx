@@ -1,22 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { AppSidebar } from './components/AppSidebar.tsx';
 import Footer from './components/Footer.tsx';
 import TodoList from './components/TodoList';
 import Toolbar from './components/Toolbar';
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar.tsx';
+import { sidebarKeybindings } from './keybindings/sidebar-keybinding.ts';
 import { useProjectStore } from './store/projectsStore.ts';
 import { useTodoStore } from './store/todosStore';
-import { sidebarKeybindings } from './keybindings/sidebar-keybinding.ts';
-import { AppFrame } from './interfaces/appFrames.ts';
+import { useUIStore } from './store/uiStore.ts';
 
 function App() {
-  const [open, setOpen] = useState(false)
-  // 'main', 'sidebar'
-  const [activeFrame, setActiveFrame] = useState<AppFrame>(AppFrame.body)
   const initializeProjects = useProjectStore((s) => s.initialize)
   const initializeTodos = useTodoStore((s) => s.initialize)
+  const sidebarOpen = useUIStore((s) => s.sidebarOpen)
 
-  sidebarKeybindings(open, setOpen, activeFrame)
+  sidebarKeybindings()
 
   useEffect(() => {
     initializeTodos()
@@ -29,18 +27,12 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    if (!!open) {
-      setActiveFrame(open ? AppFrame.sidebar : AppFrame.body)
-    }
-  })
-
   return (
-    <SidebarProvider open={open}>
+    <SidebarProvider open={sidebarOpen}>
       <AppSidebar />
       <SidebarInset>
         {/* <div className="flex flex-col flex-1 overflow-hidden"> */}
-        <Toolbar sidebarToogle={() => setOpen(!open)} />
+        <Toolbar />
         <div className="flex-1 overflow-y-auto">
           <TodoList />
         </div>
