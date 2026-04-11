@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, KeyboardEvent, useEffect } from "react";
-import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { X } from "lucide-react";
+import { KeyboardEvent, useRef, useState } from "react";
 
 interface TagsInputProps {
   tags: string[];
@@ -13,44 +13,32 @@ interface TagsInputProps {
 }
 
 export function TagInput({ tags, suggestedTags, onChange }: TagsInputProps) {
-  const [allTags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [open, setOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const suggestions = suggestedTags.filter(
-    (t) => !allTags.includes(t) && t.includes(inputValue.toLowerCase())
-  );
-  const canCreate = inputValue.trim() && !suggestedTags.includes(inputValue.trim()) && !allTags.includes(inputValue.trim());
-
-  useEffect(() => {
-    if (tags?.length > 0) {
-      setTags(tags)
-    }
-  }, [tags])
+  const canCreate = inputValue.trim() && !suggestedTags.includes(inputValue.trim()) && !tags.includes(inputValue.trim());
 
   const addTag = (tag: string) => {
     const t = tag.trim();
-    if (t && !allTags.includes(t)) {
-      setTags((prev) => [...prev, t]);
+    if (t && !tags.includes(t)) {
+      onChange([...tags, t])
       setInputValue("");
       setOpen(false);
       inputRef.current?.focus();
     }
-    onChange(allTags)
   };
 
-  const removeTag = (tag: string) => setTags((prev) => prev.filter((t) => t !== tag));
+  const removeTag = (tag: string) => onChange(tags.filter((t) => t !== tag));
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if ((e.key === "Enter" || e.key === ",") && inputValue.trim()) {
       e.preventDefault();
       addTag(inputValue);
     }
-    if (e.key === "Backspace" && !inputValue && allTags.length) {
-      setTags((prev) => prev.slice(0, -1));
-      onChange(allTags)
+    if (e.key === "Backspace" && !inputValue && tags.length) {
+      onChange(tags.slice(0, -1));
     }
   };
 
@@ -61,7 +49,7 @@ export function TagInput({ tags, suggestedTags, onChange }: TagsInputProps) {
           className="flex flex-wrap gap-1.5 min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm cursor-text focus-within:ring-2 focus-within:ring-ring"
           onClick={() => inputRef.current?.focus()}
         >
-          {allTags.map((tag) => (
+          {tags.map((tag) => (
             <Badge key={tag} variant="secondary" className="gap-1">
               {tag}
               <X
@@ -76,7 +64,7 @@ export function TagInput({ tags, suggestedTags, onChange }: TagsInputProps) {
             onChange={(e) => { setInputValue(e.target.value); setOpen(true); }}
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
-            placeholder={allTags.length === 0 ? "Добавить тег..." : ""}
+            placeholder={tags.length === 0 ? "Добавить тег..." : ""}
             className="flex-1 min-w-24 bg-transparent outline-none placeholder:text-muted-foreground"
           />
         </div>
@@ -85,10 +73,10 @@ export function TagInput({ tags, suggestedTags, onChange }: TagsInputProps) {
       <PopoverContent className="p-0 w-[--radix-popover-trigger-width]" onOpenAutoFocus={(e) => e.preventDefault()}>
         <Command>
           <CommandList>
-            {suggestions.length === 0 && !canCreate && <CommandEmpty>Нет совпадений</CommandEmpty>}
-            {suggestions.length > 0 && (
+            {suggestedTags.length === 0 && !canCreate && <CommandEmpty>Нет совпадений</CommandEmpty>}
+            {suggestedTags.length > 0 && (
               <CommandGroup heading="Существующие">
-                {suggestions.map((t) => (
+                {suggestedTags.map((t) => (
                   <CommandItem key={t} onSelect={() => addTag(t)}>{t}</CommandItem>
                 ))}
               </CommandGroup>

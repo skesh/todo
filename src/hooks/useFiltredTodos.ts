@@ -4,10 +4,10 @@ import { isBefore, parse } from "date-fns";
 import { useMemo } from "react";
 
 export function useFiltredTodos() {
-  const isFilted = useTodoStore(s => s.isFiltred)
+  const isFiltred = useTodoStore(s => s.isFiltred)
   const items = useTodoStore(s => s.items)
 
-  return useMemo(() => !!isFilted
+  return useMemo(() => !!isFiltred
     ? items.filter((i: ITodo) => !i.date || (!!i.date && isBefore(parse(i.date, 'dd.MM.yyyy', new Date()), new Date())))
-    : items, [isFilted, items])
+    : items, [isFiltred, items])
 }

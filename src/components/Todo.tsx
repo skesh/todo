@@ -16,7 +16,7 @@ function Todo({ todo, isActive }: { todo: ITodo, isActive: boolean }) {
         {/* <ItemDescription>{todo.description}</ItemDescription> */}
       </ItemContent>
       <div>{todo.date}</div>
-      <div>{todo.tags?.length > 0 && todo.tags.map((t) => <Badge variant="secondary">{t}</Badge>)}</div>
+      <div>{todo.tags?.length > 0 && todo.tags.map((t, index) => <Badge variant="secondary" key={index}>{t}</Badge>)}</div>
       {/* <ItemActions> */}
       {/*   <Button>Action</Button> */}
       {/* </ItemActions> */}

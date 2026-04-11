@@ -11,6 +11,7 @@ import { Textarea } from "./ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group.tsx";
 import { Toggle } from "./ui/toggle.tsx";
 import { cn } from "@/lib/utils.ts";
+import { useTags } from "@/hooks/useTags.tsx";
 
 interface AddTodoProps {
   onAdd: (todo: ITodo) => void;
@@ -30,6 +31,7 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
   const [done, setDone] = useState(false)
 
   const repeatOptions = ['month', 'year', 'week']
+  const globalTags = useTags()
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -46,7 +48,6 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
       setRepeat(todo.repeat)
       setCreated(todo.created)
       setDone(todo.done)
-      console.log(todo)
     }
   }, [todo, mode])
 
@@ -71,7 +72,7 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
 
       <Field>
         <Label htmlFor="tags">Tags</Label>
-        <TagInput tags={tags} suggestedTags={["react", "typescript", "nextjs", "tailwind", "shadcn"]} onChange={setTags} />
+        <TagInput tags={tags} suggestedTags={globalTags} onChange={setTags} />
       </Field>
 
       <div className="flex gap-4">
@@ -81,8 +82,8 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
         </Field >
 
         <ToggleGroup type="single" value={repeat} onValueChange={setRepeat} className={styles.repeatContainer}>
-          {repeatOptions.map((option) => (
-            <ToggleGroupItem className={cn((repeat === option ? styles.activeItem : ''), 'items-end')} value={option}>{option}</ToggleGroupItem>
+          {repeatOptions.map((option, index) => (
+            <ToggleGroupItem key={index} className={cn((repeat === option ? styles.activeItem : ''), 'items-end')} value={option}>{option}</ToggleGroupItem>
           ))}
         </ToggleGroup>
       </div >

@@ -1,3 +1,4 @@
+import { useFiltredTodos } from "@/hooks/useFiltredTodos";
 import { useEffect, useRef } from "react";
 import { ITodo } from "../interfaces/todo";
 import { useTodoStore } from "../store/todosStore";
@@ -5,7 +6,6 @@ import AddTodo from "./AddTodo";
 import Todo from "./Todo";
 import styles from "./TodoList.module.css";
 import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
-import { useFiltredTodos } from "@/hooks/useFiltredTodos";
 
 function TodoList() {
   const items = useTodoStore((s) => s.items);
@@ -68,7 +68,7 @@ function TodoList() {
             <DrawerFooter>
               <AddTodo
                 onAdd={handleAddTodo}
-                todo={items[activeIndex]}
+                todo={filtredItems[activeIndex]}
                 mode={mode}
               />
               {/* <DrawerClose> */}
