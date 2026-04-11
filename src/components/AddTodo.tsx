@@ -1,4 +1,4 @@
-import { TodoState } from "@/store/todosStore";
+import { TodoState, useTodoStore } from "@/store/todosStore";
 import { FlameIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { ITodo } from "../interfaces/todo";
@@ -12,14 +12,15 @@ import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group.tsx";
 import { Toggle } from "./ui/toggle.tsx";
 import { cn } from "@/lib/utils.ts";
 import { useTags } from "@/hooks/useTags.tsx";
+import { nanoid } from 'nanoid';
 
 interface AddTodoProps {
-  onAdd: (todo: ITodo) => void;
   todo?: ITodo;
   mode: TodoState['mode'];
 }
 
-export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
+export default function AddTodo({ todo, mode }: AddTodoProps) {
+  const [id, setId] = useState(nanoid())
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [tags, setTags] = useState<string[]>([])
@@ -33,12 +34,17 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
   const repeatOptions = ['month', 'year', 'week']
   const globalTags = useTags()
 
+  const activeId = useTodoStore((s) => s.activeId)
+  const addItem = useTodoStore((s) => s.addItem)
+  const editItem = useTodoStore((s) => s.editItemById)
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus()
 
     if (todo && mode === 'edit') {
+      setId(todo.id)
       setTitle(todo.title)
       setDescription(todo.description)
       setTags(todo.tags)
@@ -51,9 +57,13 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
     }
   }, [todo, mode])
 
-  function handleAdd() {
-    if (title.trim()) {
-      onAdd({ title, description, tags, priority, date, endDate, repeat, created, done });
+  function onSubmit() {
+    const item = { id, title, description, tags, priority, date, endDate, repeat, created, done };
+    if (!!mode && mode === 'add') {
+      addItem(item);
+    }
+    if (!!mode && mode === 'edit') {
+      editItem(activeId!, item)
     }
   }
 
@@ -65,7 +75,7 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+          onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
           ref={inputRef}
         />
       </Field>
@@ -78,7 +88,11 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
       <div className="flex gap-4">
         <Field>
           <Label>Date</Label>
-          <Input value={date} onChange={(e) => setDate(e.target.value)} />
+          <Input
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
+          />
         </Field >
 
         <ToggleGroup type="single" value={repeat} onValueChange={setRepeat} className={styles.repeatContainer}>
@@ -94,7 +108,7 @@ export default function AddTodo({ onAdd, todo, mode }: AddTodoProps) {
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+          onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
         />
       </Field>
 

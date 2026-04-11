@@ -3,13 +3,15 @@ import { ITodo } from "../interfaces/todo";
 
 export interface TodoState {
   items: ITodo[],
-  activeIndex: number,
+  activeId: string | null,
   mode: 'add' | 'edit' | false,
   isFiltred: boolean,
   initialized: boolean,
   initialize: () => Promise<void>,
   setItems: (items: ITodo[]) => void,
-  setIndex: (index: number) => void,
+  setActiveId: (index: string | null) => void,
+  addItem: (item: ITodo) => void,
+  editItemById: (id: string, item: ITodo) => void,
   deleteActiveTodo: () => void,
   setMode: (mode: 'add' | 'edit' | false) => void,
   toogleFilter: () => void,
@@ -17,7 +19,7 @@ export interface TodoState {
 
 export const useTodoStore = create<TodoState>((set, get) => ({
   items: [],
-  activeIndex: -1,
+  activeId: null,
   initialized: false,
   mode: false,
   isFiltred: true,
@@ -34,8 +36,20 @@ export const useTodoStore = create<TodoState>((set, get) => ({
     window.ipcRenderer.store.set('items', items);
   },
 
-  setIndex: (activeIndex: number) => {
-    set({ activeIndex })
+  addItem: (item: ITodo) => {
+    const { items, setItems } = get()
+    setItems([...items, item])
+  },
+
+  editItemById: (id: string, item: ITodo) => {
+    const { items, setItems } = get()
+
+    const newArr = [...items].map(i => i.id === id ? item : i)
+    setItems(newArr)
+  },
+
+  setActiveId: (activeId: string | null) => {
+    set({ activeId })
   },
 
   setMode: (mode) => {
@@ -43,12 +57,8 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   },
 
   deleteActiveTodo: () => {
-    const { activeIndex, items } = get();
-    const newItems = items.filter((_, index) => index !== activeIndex);
-    if (activeIndex === newItems.length) {
-      set({ activeIndex: activeIndex - 1 });
-    }
-    set({ items: newItems })
+    const { activeId, items, setItems } = get();
+    setItems(items.filter((item) => item.id !== activeId))
   },
 
   toogleFilter: () => {

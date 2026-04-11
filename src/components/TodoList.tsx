@@ -1,6 +1,6 @@
 import { useFiltredTodos } from "@/hooks/useFiltredTodos";
-import { useEffect, useRef } from "react";
-import { ITodo } from "../interfaces/todo";
+import keybindings from "@/keybindings/keybindings";
+import { useEffect, useRef, useState } from "react";
 import { useTodoStore } from "../store/todosStore";
 import AddTodo from "./AddTodo";
 import Todo from "./Todo";
@@ -8,14 +8,21 @@ import styles from "./TodoList.module.css";
 import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
 
 function TodoList() {
-  const items = useTodoStore((s) => s.items);
-  const activeIndex = useTodoStore((s) => s.activeIndex);
-  const setIndex = useTodoStore((s) => s.setIndex);
-  const setItems = useTodoStore((s) => s.setItems);
+  const [activeIndex, setIndex] = useState(-1);
+  const setActiveId = useTodoStore((s) => s.setActiveId)
+
+  const items = useFiltredTodos()
   const mode = useTodoStore((s) => s.mode);
-  const filtredItems = useFiltredTodos()
 
   const listRef = useRef<HTMLDivElement>(null);
+
+  keybindings(activeIndex, items.length, setIndex);
+
+  useEffect(() => {
+    if (activeIndex >= 0) {
+      if (items[activeIndex]?.id) setActiveId(items[activeIndex]?.id)
+    }
+  })
 
   useEffect(() => {
     if (activeIndex >= 0 && listRef.current) {
@@ -35,24 +42,11 @@ function TodoList() {
     }
   }, [activeIndex])
 
-  const handleAddTodo = (todo: ITodo) => {
-    if (mode) {
-      if (mode === 'add') {
-        setItems([...items, todo]);
-      }
-      if (mode === 'edit') {
-        const newItems = [...items.map((i, index) => index === activeIndex ? todo : i)];
-        setItems(newItems);
-        setIndex(newItems.findIndex(i => i.created === todo.created));
-      }
-    }
-  }
-
   return (
     <>
       <div className={styles.todoList} ref={listRef}>
 
-        {filtredItems.length > 0 && filtredItems.map((t, index) => (
+        {items.length > 0 && items.map((t, index) => (
           <Todo
             todo={t}
             key={index}
@@ -66,11 +60,7 @@ function TodoList() {
               <DrawerDescription>Description</DrawerDescription>
             </DrawerHeader>
             <DrawerFooter>
-              <AddTodo
-                onAdd={handleAddTodo}
-                todo={filtredItems[activeIndex]}
-                mode={mode}
-              />
+              <AddTodo todo={items[activeIndex]} mode={mode} />
               {/* <DrawerClose> */}
               {/*   <Button variant="outline">Cancel</Button> */}
               {/* </DrawerClose> */}

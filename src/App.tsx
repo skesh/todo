@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 import './App.css';
 import TodoList from './components/TodoList';
-import keybindings from './keybindings/keybindings';
-import { useTodoStore } from './store/todosStore';
 import Toolbar from './components/Toolbar';
+import { useTodoStore } from './store/todosStore';
 
 function App() {
   const initialize = useTodoStore((s) => s.initialize);
@@ -17,8 +16,6 @@ function App() {
       document.documentElement.classList.add('dark');
     }
   }, []);
-
-  keybindings();
 
   return (
     <>

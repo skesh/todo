@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { CircleIcon } from "lucide-react";
+import { CircleIcon, FlameIcon } from "lucide-react";
 import { ITodo } from "../interfaces/todo";
 import styles from "./todo.module.css";
 import { Badge } from "./ui/badge";
@@ -12,7 +12,10 @@ function Todo({ todo, isActive }: { todo: ITodo, isActive: boolean }) {
         <CircleIcon className="text-gray-600" />
       </ItemMedia>
       <ItemContent>
-        <ItemTitle className="text-gray-400 text-base">{todo.title}</ItemTitle>
+        <ItemTitle className="text-gray-400 text-base">
+          {todo.title}
+          {todo.priority && <FlameIcon className="text-red-500" />}
+        </ItemTitle>
         {/* <ItemDescription>{todo.description}</ItemDescription> */}
       </ItemContent>
       <div>{todo.date}</div>

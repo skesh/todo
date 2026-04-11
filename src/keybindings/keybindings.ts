@@ -1,13 +1,11 @@
 import { useEffect, useRef } from "react";
 import { useTodoStore } from "../store/todosStore";
 
-export default function keybindings() {
+export default function keybindings(activeIndex: number, totalItems: number, setIndex: (id: number) => void) {
   const items = useTodoStore((s) => s.items);
-  const activeIndex = useTodoStore((s) => s.activeIndex);
-  const mode = useTodoStore((s) => s.mode);
-
-  const setIndex = useTodoStore((s) => s.setIndex);
   const deleteActiveTodo = useTodoStore((s) => s.deleteActiveTodo);
+
+  const mode = useTodoStore((s) => s.mode);
   const setMode = useTodoStore((s) => s.setMode);
 
   const lastKeyRef = useRef<string | null>(null);
@@ -20,7 +18,7 @@ export default function keybindings() {
 
       if (e.key === 'j') {
         if (!mode) {
-          setIndex((activeIndex < (items.length - 1)) ? activeIndex + 1 : 0);
+          setIndex(activeIndex < (totalItems - 1) ? activeIndex + 1 : 0);
         }
         return;
       }
@@ -53,14 +51,13 @@ export default function keybindings() {
       if (e.key === 'd') {
         if (!mode) {
           deleteActiveTodo();
+          if (activeIndex === (totalItems - 1)) setIndex(activeIndex - 1)
         }
         return
       }
 
       if (e.key === 'G') {
-        if (!mode) {
-          setIndex(0);
-        }
+        if (!mode) setIndex(0)
         return
       }
 
