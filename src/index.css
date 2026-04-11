@@ -5,6 +5,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+#root {
+  width: 100%;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -192,9 +200,11 @@ button:focus-visible {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }

@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import './App.css';
 import TodoList from './components/TodoList';
 import Toolbar from './components/Toolbar';
 import { useTodoStore } from './store/todosStore';
+import Footer from './components/Footer.tsx';
 
 function App() {
   const initialize = useTodoStore((s) => s.initialize);
@@ -18,12 +18,11 @@ function App() {
   }, []);
 
   return (
-    <>
-      <div className='flex-col flex-1'>
-        <Toolbar />
-        <TodoList />
-      </div>
-    </>
+    <div className='flex flex-col h-screen'>
+      <Toolbar />
+      <TodoList />
+      <Footer />
+    </div>
   )
 }
 

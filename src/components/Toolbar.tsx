@@ -7,13 +7,11 @@ import { Toggle } from "./ui/toggle.tsx";
 export default function Toolbar() {
   const isFiltred = useTodoStore((s) => s.isFiltred);
   const toogleFilter = useTodoStore((s) => s.toogleFilter)
-  const activeId = useTodoStore((s) => s.activeId)
-  const tags = useTags()
   const items = useTodoStore((s) => s.items)
+  const tags = useTags()
 
   return (
-    <div className='flex items-center gap-4 justify-between'>
-      <span>{activeId}</span>
+    <div className='flex items-center gap-4 justify-between px-2 py-2 shrink-0'>
       <Toggle onClick={toogleFilter} pressed={isFiltred} className='gap-2'>
         <EyeIcon className="group-data-[state=on]/toggle:fill-foreground" />
         {isFiltred ? 'hidden' : 'show'}

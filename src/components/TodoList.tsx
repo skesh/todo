@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useTodoStore } from "../store/todosStore";
 import EditTodo from "./EditTodo";
 import Todo from "./Todo";
-import styles from "./TodoList.module.css";
 import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
 
 function TodoList() {
@@ -43,32 +42,29 @@ function TodoList() {
   }, [activeIndex])
 
   return (
-    <>
-      <div className={styles.todoList} ref={listRef}>
+    <div className='flex flex-1 flex-col gap-1 w-full px-2 overflow-auto' ref={listRef}>
+      {items.length > 0 && items.map((t, index) => (
+        <Todo
+          todo={t}
+          key={index}
+          isActive={index === activeIndex} />
+      ))}
 
-        {items.length > 0 && items.map((t, index) => (
-          <Todo
-            todo={t}
-            key={index}
-            isActive={index === activeIndex} />
-        ))}
-
-        <Drawer open={!!mode}>
-          <DrawerContent>
-            <DrawerHeader hidden={true}>
-              <DrawerTitle>Title</DrawerTitle>
-              <DrawerDescription>Description</DrawerDescription>
-            </DrawerHeader>
-            <DrawerFooter>
-              <EditTodo todo={items[activeIndex]} mode={mode} />
-              {/* <DrawerClose> */}
-              {/*   <Button variant="outline">Cancel</Button> */}
-              {/* </DrawerClose> */}
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
-      </div>
-    </>
+      <Drawer open={!!mode}>
+        <DrawerContent>
+          <DrawerHeader hidden={true}>
+            <DrawerTitle>Title</DrawerTitle>
+            <DrawerDescription>Description</DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter>
+            <EditTodo todo={items[activeIndex]} mode={mode} />
+            {/* <DrawerClose> */}
+            {/*   <Button variant="outline">Cancel</Button> */}
+            {/* </DrawerClose> */}
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </div>
   )
 }
 
