@@ -7,7 +7,6 @@ import { Toggle } from "./ui/toggle.tsx";
 export default function Toolbar() {
   const isFiltred = useTodoStore((s) => s.isFiltred);
   const toogleFilter = useTodoStore((s) => s.toogleFilter)
-  const items = useTodoStore((s) => s.items)
   const tags = useTags()
 
   return (
@@ -23,8 +22,6 @@ export default function Toolbar() {
           <Badge variant="secondary" key={index}>{tag}</Badge>
         ))}
       </div>
-
-      <span>total: {items.length}</span>
     </div >
   )
 }
