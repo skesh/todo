@@ -1,6 +1,7 @@
 import Toolbar from "./Toolbar"
 import Footer from "./Footer"
 import TodoList from "../Todo/TodoList"
+import TodoDrawer from "../Todo/TodoDrawer"
 
 const PageHome = () => (
   <>
@@ -9,6 +10,7 @@ const PageHome = () => (
       <TodoList />
     </div>
     <Footer />
+    <TodoDrawer />
   </>
 )
 

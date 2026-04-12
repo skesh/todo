@@ -2,11 +2,9 @@ import { useFiltredTodos } from "@/hooks/useFiltredTodos";
 import keybindings from "@/keybindings/keybindings";
 import { useEffect, useRef, useState } from "react";
 import { useTodoStore } from "../../store/todosStore";
-import EditTodo from "./EditTodo";
 import Todo from "./Todo";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "../ui/drawer";
 
-function TodoList() {
+export default function TodoList() {
   const [activeIndex, setIndex] = useState(-1);
   const setActiveId = useTodoStore((s) => s.setActiveId)
 
@@ -52,5 +50,3 @@ function TodoList() {
     </div>
   )
 }
-
-export default TodoList;

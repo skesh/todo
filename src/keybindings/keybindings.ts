@@ -18,64 +18,49 @@ export default function keybindings(activeIndex: number, totalItems: number, set
       const now = Date.now();
       const timeDiff = now - lastTimeRef.current;
 
-      if (e.key === 'j' && !sidebarOpen) {
-        if (!mode) {
-          setIndex(activeIndex < (totalItems - 1) ? activeIndex + 1 : 0);
+      if (!sidebarOpen) {
+        if (e.key === 'j') {
+          if (!mode) {
+            setIndex(activeIndex < (totalItems - 1) ? activeIndex + 1 : 0);
+          }
+          return;
         }
-        return;
-      }
 
-      if (e.key === 'k' && !sidebarOpen) {
-        if (!mode) {
-          setIndex(activeIndex > 0 ? (activeIndex - 1) : items.length - 1);
+        if (e.key === 'k') {
+          if (!mode) {
+            setIndex(activeIndex > 0 ? (activeIndex - 1) : items.length - 1);
+          }
+          return;
         }
-        return;
-      }
 
-      if (e.key === 'o' && !sidebarOpen) {
-        if (!mode) {
-          e.stopPropagation()
-          e.preventDefault()
-          setMode('add')
+        if (e.key === 'i') {
+          if (!mode) {
+            e.stopPropagation()
+            e.preventDefault()
+            setMode('edit');
+          }
+          return;
         }
-        return;
-      }
 
-      if (e.key === 'i' && !sidebarOpen) {
-        if (!mode) {
-          e.stopPropagation()
-          e.preventDefault()
-          setMode('edit');
+        if (e.key === 'd') {
+          if (!mode) {
+            deleteActiveTodo();
+            if (activeIndex === (totalItems - 1)) setIndex(activeIndex - 1)
+          }
+          return
         }
-        return;
-      }
 
-      if (e.key === 'd' && !sidebarOpen) {
-        if (!mode) {
-          deleteActiveTodo();
-          if (activeIndex === (totalItems - 1)) setIndex(activeIndex - 1)
+        if (e.key === 'G') {
+          if (!mode) setIndex(0)
+          return
         }
-        return
-      }
 
-      if (e.key === 'G' && !sidebarOpen) {
-        if (!mode) setIndex(0)
-        return
-      }
-
-      if (e.key === 'g' && lastKeyRef.current === 'g' && timeDiff < 300 && !sidebarOpen) {
-        if (!mode) {
-          setIndex(items.length - 1);
+        if (e.key === 'g' && lastKeyRef.current === 'g' && timeDiff < 300) {
+          if (!mode) {
+            setIndex(items.length - 1);
+          }
+          return
         }
-        return
-      }
-
-      if (e.key === 'Escape' && !sidebarOpen) {
-        if (mode) {
-          e.preventDefault();
-          setMode(false);
-        }
-        return;
       }
 
       lastKeyRef.current = e.key;
