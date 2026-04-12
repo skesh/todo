@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useParams } from "react-router";
 import { Textarea } from "../ui/textarea";
 import TodoDrawer from "../Todo/TodoDrawer";
+import TodoList from "../Todo/TodoList";
 
 export default function PageProject() {
   const { id } = useParams<{ id: string }>()
@@ -29,11 +30,11 @@ export default function PageProject() {
 
   return (
     <>
-      {!!activeProject && <div className="flex flex-col px-10 py-10">
+      {!!activeProject && <div className="flex flex-col px-10 py-10 gap-4">
         <span className="text-[36px]">{activeProject.name}</span>
-        <Textarea placeholder="Description..." value={activeProject.description} className="mt-4" onChange={(e) => updateProjectField('description', e.target.value)} />
+        <Textarea placeholder="Description..." value={activeProject.description} onChange={(e) => updateProjectField('description', e.target.value)} />
 
-        {projectTodos.map((t, index) => <span key={index}>{t.id}</span>)}
+        <TodoList todos={projectTodos} />
 
         <TodoDrawer />
       </div>

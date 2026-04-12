@@ -7,7 +7,6 @@ export function useFiltredTodos() {
   const isFiltred = useTodoStore(s => s.isFiltred)
   const items = useTodoStore(s => s.items)
 
-
   return useMemo(() => {
     const result = isFiltred
       ? items.filter((i: ITodo) => !i.date || (!!i.date && isBefore(parse(i.date, 'dd.MM.yyyy', new Date()), new Date())))

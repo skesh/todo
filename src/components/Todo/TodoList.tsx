@@ -1,25 +1,22 @@
-import { useFiltredTodos } from "@/hooks/useFiltredTodos";
+import { ITodo } from "@/interfaces/todo";
 import keybindings from "@/keybindings/keybindings";
 import { useEffect, useRef, useState } from "react";
 import { useTodoStore } from "../../store/todosStore";
 import Todo from "./Todo";
 
-export default function TodoList() {
+export default function TodoList({ todos }: { todos: ITodo[] }) {
   const [activeIndex, setIndex] = useState(-1);
   const setActiveId = useTodoStore((s) => s.setActiveId)
 
-  const items = useFiltredTodos()
-  const mode = useTodoStore((s) => s.mode);
-
   const listRef = useRef<HTMLDivElement>(null);
 
-  keybindings(activeIndex, items.length, setIndex);
+  keybindings(activeIndex, todos.length, setIndex);
 
   useEffect(() => {
     if (activeIndex >= 0) {
-      if (items[activeIndex]?.id) setActiveId(items[activeIndex]?.id)
+      if (todos[activeIndex]?.id) setActiveId(todos[activeIndex]?.id)
     }
-  }, [activeIndex, items])
+  }, [activeIndex, todos])
 
   useEffect(() => {
     if (activeIndex >= 0 && listRef.current) {
@@ -41,7 +38,7 @@ export default function TodoList() {
 
   return (
     <div className='flex flex-1 flex-col gap-1 w-full px-2 overflow-auto' ref={listRef}>
-      {items.length > 0 && items.map((t, index) => (
+      {todos.length > 0 && todos.map((t, index) => (
         <Todo
           todo={t}
           key={index}

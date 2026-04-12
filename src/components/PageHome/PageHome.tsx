@@ -1,17 +1,20 @@
-import Toolbar from "./Toolbar"
-import Footer from "./Footer"
-import TodoList from "../Todo/TodoList"
+import { useFiltredTodos } from "@/hooks/useFiltredTodos"
 import TodoDrawer from "../Todo/TodoDrawer"
+import TodoList from "../Todo/TodoList"
+import Footer from "./Footer"
+import Toolbar from "./Toolbar"
 
-const PageHome = () => (
-  <>
-    <Toolbar />
-    <div className="flex-1 overflow-y-auto">
-      <TodoList />
-    </div>
-    <Footer />
-    <TodoDrawer />
-  </>
-)
+export default function PageHome() {
+  const todos = useFiltredTodos() || []
 
-export default PageHome
+  return (
+    <>
+      <Toolbar />
+      <div className="flex-1 overflow-y-auto">
+        <TodoList todos={todos} />
+      </div>
+      <Footer />
+      <TodoDrawer />
+    </>
+  )
+}
