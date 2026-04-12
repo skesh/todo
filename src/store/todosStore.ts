@@ -1,6 +1,6 @@
 import { create } from "zustand";
+import { useShallow } from "zustand/shallow";
 import { ITodo } from "../interfaces/todo";
-import { shallow, useShallow } from "zustand/shallow"
 
 export interface TodoState {
   items: ITodo[],

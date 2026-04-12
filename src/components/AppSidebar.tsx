@@ -8,7 +8,7 @@ import {
   SidebarMenuItem
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
-import { useProjectStore } from "@/store/projectsStore"
+import { useProjectActions, useProjectStore } from "@/store/projectsStore"
 import { useUIStore } from "@/store/uiStore.ts"
 import { nanoid } from "nanoid"
 import { useEffect, useState } from "react"
@@ -17,31 +17,28 @@ import { useNavigate } from "react-router"
 
 export function AppSidebar() {
   const projects = useProjectStore((s) => s.projects)
+  const { addProject } = useProjectActions()
   const editProjectOpen = useUIStore((s) => s.editProjectOpen)
   const setEditProject = useUIStore((s) => s.setEditProject)
-  const addProject = useProjectStore((s) => s.addProject)
-  const projectId = useProjectStore((s) => s.activeId)
+  const activeProjectId = useProjectStore((s) => s.activeId)
 
   const [name, setName] = useState('')
-  const [id, setId] = useState(nanoid())
-  const [description, setDescription] = useState('')
 
   const navigate = useNavigate();
 
   function submitProject() {
     if (!!name.trim()) {
-      addProject({ id, name, description, todoIds: [] })
+      addProject({ id: nanoid(), name, description: '', todoIds: [] })
       setName('')
-      setId(nanoid())
       setEditProject(false)
     }
   }
 
   useEffect(() => {
-    if (projectId) {
-      navigateToProject(projectId);
+    if (activeProjectId) {
+      navigateToProject(activeProjectId);
     }
-  }, [projectId])
+  }, [activeProjectId])
 
   const navigateToProject = (projectId: string) => {
     navigate(`/project/${projectId}`)
@@ -58,7 +55,7 @@ export function AppSidebar() {
                 <SidebarMenuItem
                   key={item.id}
                   onClick={() => navigateToProject(item.id)}
-                  className={cn('px-4', 'text-[16px]', (item.id === projectId && 'bg-red-500'))}
+                  className={cn('px-4', 'text-[16px]', (item.id === activeProjectId && 'bg-red-500'))}
                 >{item.name}</SidebarMenuItem>
               ))}
               {/* TODO: вынести в компонент */}
