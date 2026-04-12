@@ -1,25 +1,34 @@
-import { TodoState, useTodoStore } from "@/store/todosStore";
-import { FlameIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { ITodo } from "../interfaces/todo.ts";
-import styles from "./EditTodo.module.css";
-import { TagInput } from "./ui-custom/TagInput.tsx";
-import { Field } from "./ui/field.tsx";
-import { Input } from "./ui/input.tsx";
-import { Label } from "./ui/label.tsx";
-import { Textarea } from "./ui/textarea.tsx";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group.tsx";
-import { Toggle } from "./ui/toggle.tsx";
-import { cn } from "@/lib/utils.ts";
 import { useTags } from "@/hooks/useTags.tsx";
+import { cn } from "@/lib/utils.ts";
+import { useProjectSelectors } from "@/store/projectsStore.ts";
+import { TodoState, useTodoActions, useTodoSelectors } from "@/store/todosStore";
+import { FlameIcon } from "lucide-react";
 import { nanoid } from 'nanoid';
+import { useEffect, useRef, useState } from "react";
+import { ITodo } from "../../interfaces/todo.ts";
+import { TagInput } from "../ui-custom/TagInput.tsx";
+import { Field } from "../ui/field.tsx";
+import { Input } from "../ui/input.tsx";
+import { Label } from "../ui/label.tsx";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx";
+import { Textarea } from "../ui/textarea.tsx";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group.tsx";
+import { Toggle } from "../ui/toggle.tsx";
+import styles from "./EditTodo.module.css";
 
 interface EditTodoProps {
-  todo?: ITodo;
   mode: TodoState['mode'];
 }
 
-export default function EditTodo({ todo, mode }: EditTodoProps) {
+const repeatOptions = ['month', 'year', 'week']
+
+export default function EditTodo({ mode }: EditTodoProps) {
+  const { activeTodo } = useTodoSelectors()
+  const { addItem, editItemById } = useTodoActions()
+
+  const { projects, activeProjectId } = useProjectSelectors()
+  const globalTags = useTags()
+
   const [id, setId] = useState(nanoid())
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -30,40 +39,41 @@ export default function EditTodo({ todo, mode }: EditTodoProps) {
   const [repeat, setRepeat] = useState<ITodo['repeat']>(undefined)
   const [created, setCreated] = useState(new Date().toString())
   const [done, setDone] = useState(false)
-
-  const repeatOptions = ['month', 'year', 'week']
-  const globalTags = useTags()
-
-  const activeId = useTodoStore((s) => s.activeId)
-  const addItem = useTodoStore((s) => s.addItem)
-  const editItem = useTodoStore((s) => s.editItemById)
+  const [projectId, setProjectId] = useState<string | undefined>(undefined)
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus()
 
-    if (todo && mode === 'edit') {
-      setId(todo.id)
-      setTitle(todo.title)
-      setDescription(todo.description)
-      setTags(todo.tags)
-      setPriority(todo.priority)
-      setDate(todo.date)
-      setEndDate(todo.endDate)
-      setRepeat(todo.repeat)
-      setCreated(todo.created)
-      setDone(todo.done)
+    if (activeTodo && mode === 'edit') {
+      setId(activeTodo.id)
+      setTitle(activeTodo.title)
+      setDescription(activeTodo.description)
+      setTags(activeTodo.tags)
+      setPriority(activeTodo.priority)
+      setDate(activeTodo.date)
+      setEndDate(activeTodo.endDate)
+      setRepeat(activeTodo.repeat)
+      setCreated(activeTodo.created)
+      setDone(activeTodo.done)
     }
-  }, [todo, mode])
+
+    if (mode === 'add') {
+      if (!!activeProjectId) {
+        setProjectId(activeProjectId)
+      }
+    }
+
+  }, [activeTodo, mode])
 
   function onSubmit() {
-    const item = { id, title, description, tags, priority, date, endDate, repeat, created, done };
+    const item = { id, title, description, tags, priority, date, endDate, repeat, created, done, projectId };
     if (!!mode && mode === 'add') {
       addItem(item);
     }
-    if (!!mode && mode === 'edit') {
-      editItem(activeId!, item)
+    if (!!mode && mode === 'edit' && activeTodo) {
+      editItemById(activeTodo.id, item)
     }
   }
 
@@ -111,6 +121,20 @@ export default function EditTodo({ todo, mode }: EditTodoProps) {
           onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
         />
       </Field>
+
+      {projects.length > 0 && <Field>
+        <Label>Project</Label>
+        <Select value={projectId} onValueChange={setProjectId}>
+          <SelectTrigger className="w-45">
+            <SelectValue placeholder="Project" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {projects.map((p, index) => <SelectItem value={p.id} key={index}>{p.name}</SelectItem>)}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </Field>}
 
       <div className="flex gap-2">
         <Toggle aria-label="Toggle bookmark" size="sm" variant="outline" pressed={priority} onPressedChange={setPriority}>

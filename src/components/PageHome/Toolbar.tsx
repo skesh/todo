@@ -1,10 +1,9 @@
 import { useTags } from "@/hooks/useTags";
 import { useTodoStore } from "@/store/todosStore";
-import { EyeIcon } from "lucide-react";
-import { Badge } from "./ui/badge.tsx";
-import { Toggle } from "./ui/toggle.tsx";
-import { SidebarTrigger } from "./ui/sidebar.tsx";
 import { useUIStore } from "@/store/uiStore.ts";
+import { EyeIcon } from "lucide-react";
+import { SidebarTrigger } from "../ui/sidebar.tsx";
+import { Toggle } from "../ui/toggle.tsx";
 
 export default function Toolbar() {
   const isFiltred = useTodoStore((s) => s.isFiltred);

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { ITodo } from "../interfaces/todo";
+import { shallow, useShallow } from "zustand/shallow"
 
 export interface TodoState {
   items: ITodo[],
@@ -57,3 +58,22 @@ export const useTodoStore = create<TodoState>((set, get) => ({
 
   toogleFilter: () => set(state => ({ isFiltred: !state.isFiltred }))
 }))
+
+export const useTodoActions = () =>
+  useTodoStore(useShallow((s) => ({
+    setItems: s.setItems,
+    addItem: s.addItem,
+    editItemById: s.editItemById,
+    setActiveId: s.setActiveId,
+    setMode: s.setMode,
+    deleteActiveTodo: s.deleteActiveTodo,
+    toogleFilter: s.toogleFilter
+  })))
+
+export const useTodoSelectors = () =>
+  useTodoStore(useShallow((s) => ({
+    todos: s.items,
+    activeTodo: s.items.find(i => i.id === s.activeId),
+    mode: s.mode,
+  }))
+  )

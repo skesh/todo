@@ -6,6 +6,7 @@ export interface ITodo {
   priority: boolean,
   date: string | undefined,
   endDate: string | null,
+  projectId: string | undefined,
 
   repeat: string | undefined,
 

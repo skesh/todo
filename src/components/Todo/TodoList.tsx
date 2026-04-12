@@ -1,10 +1,10 @@
 import { useFiltredTodos } from "@/hooks/useFiltredTodos";
 import keybindings from "@/keybindings/keybindings";
 import { useEffect, useRef, useState } from "react";
-import { useTodoStore } from "../store/todosStore";
+import { useTodoStore } from "../../store/todosStore";
 import EditTodo from "./EditTodo";
 import Todo from "./Todo";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "./ui/drawer";
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "../ui/drawer";
 
 function TodoList() {
   const [activeIndex, setIndex] = useState(-1);
@@ -21,7 +21,7 @@ function TodoList() {
     if (activeIndex >= 0) {
       if (items[activeIndex]?.id) setActiveId(items[activeIndex]?.id)
     }
-  })
+  }, [activeIndex, items])
 
   useEffect(() => {
     if (activeIndex >= 0 && listRef.current) {
@@ -49,21 +49,6 @@ function TodoList() {
           key={index}
           isActive={index === activeIndex} />
       ))}
-
-      <Drawer open={!!mode}>
-        <DrawerContent>
-          <DrawerHeader hidden={true}>
-            <DrawerTitle>Title</DrawerTitle>
-            <DrawerDescription>Description</DrawerDescription>
-          </DrawerHeader>
-          <DrawerFooter>
-            <EditTodo todo={items[activeIndex]} mode={mode} />
-            {/* <DrawerClose> */}
-            {/*   <Button variant="outline">Cancel</Button> */}
-            {/* </DrawerClose> */}
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
     </div>
   )
 }
