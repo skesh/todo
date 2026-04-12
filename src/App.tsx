@@ -4,7 +4,7 @@ import Footer from './components/Footer.tsx';
 import TodoList from './components/TodoList';
 import Toolbar from './components/Toolbar';
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar.tsx';
-import { sidebarKeybindings } from './keybindings/sidebar-keybinding.ts';
+import { useSidebarKeybindings } from './keybindings/sidebar-keybinding.ts';
 import { useProjectStore } from './store/projectsStore.ts';
 import { useTodoStore } from './store/todosStore';
 import { useUIStore } from './store/uiStore.ts';
@@ -14,7 +14,7 @@ function App() {
   const initializeTodos = useTodoStore((s) => s.initialize)
   const sidebarOpen = useUIStore((s) => s.sidebarOpen)
 
-  sidebarKeybindings()
+  useSidebarKeybindings()
 
   useEffect(() => {
     initializeTodos()
@@ -31,13 +31,11 @@ function App() {
     <SidebarProvider open={sidebarOpen}>
       <AppSidebar />
       <SidebarInset>
-        {/* <div className="flex flex-col flex-1 overflow-hidden"> */}
         <Toolbar />
         <div className="flex-1 overflow-y-auto">
           <TodoList />
         </div>
         <Footer />
-        {/* </div> */}
       </SidebarInset>
     </SidebarProvider>
   )

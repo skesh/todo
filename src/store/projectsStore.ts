@@ -9,6 +9,8 @@ interface ProjectsState {
   initialize: () => void,
   saveProjects: (projects: IProject[]) => void,
   addProject: (project: IProject) => void,
+  setId: (id: string) => void,
+  deleteProject: () => void,
 }
 
 export const useProjectStore = create<ProjectsState>((set, get) => ({
@@ -21,16 +23,25 @@ export const useProjectStore = create<ProjectsState>((set, get) => ({
     set({ initialized: true })
     const projects = await window.ipcRenderer.store.get('projects') as IProject[]
     set({ projects })
-    window.ipcRenderer.store.set('projects', projects)
   },
 
   saveProjects: (projects: IProject[]) => {
     set({ projects })
+    window.ipcRenderer.store.set('projects', projects)
   },
 
   addProject(project: IProject) {
     const { projects, saveProjects } = get()
     saveProjects([...projects, project])
-  }
+  },
+
+  deleteProject() {
+    const { projects, activeId, saveProjects } = get()
+    if (activeId) {
+      saveProjects([...projects.filter(p => p.id !== activeId)])
+    }
+  },
+
+  setId: (id: string) => set({ activeId: id })
 }))
 
