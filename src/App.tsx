@@ -4,7 +4,6 @@ import { AppSidebar } from './components/AppSidebar.tsx';
 import PageHome from './components/PageHome/PageHome.tsx';
 import PageProject from './components/PageProject/PageProject.tsx';
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar.tsx';
-import { useSidebarKeybindings } from './keybindings/sidebar-keybinding.ts';
 import { useProjectStore } from './store/projectsStore.ts';
 import { useTodoStore } from './store/todosStore';
 import { useUIStore } from './store/uiStore.ts';
@@ -13,8 +12,6 @@ function App() {
   const initializeProjects = useProjectStore((s) => s.initialize)
   const initializeTodos = useTodoStore((s) => s.initialize)
   const sidebarOpen = useUIStore((s) => s.sidebarOpen)
-
-  useSidebarKeybindings()
 
   useEffect(() => {
     initializeTodos()
@@ -39,6 +36,7 @@ function App() {
         </SidebarInset>
       </SidebarProvider>
     </BrowserRouter>
+
   )
 }
 

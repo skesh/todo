@@ -14,6 +14,7 @@ import { nanoid } from "nanoid"
 import { useEffect, useState } from "react"
 import { Input } from "./ui/input"
 import { useNavigate } from "react-router"
+import { useSidebarKeybindings } from "@/keybindings/sidebar-keybinding"
 
 export function AppSidebar() {
   const projects = useProjectStore((s) => s.projects)
@@ -25,6 +26,8 @@ export function AppSidebar() {
   const [name, setName] = useState('')
 
   const navigate = useNavigate();
+
+  useSidebarKeybindings()
 
   function submitProject() {
     if (!!name.trim()) {

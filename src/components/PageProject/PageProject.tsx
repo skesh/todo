@@ -6,6 +6,7 @@ import { useParams } from "react-router";
 import { Textarea } from "../ui/textarea";
 import TodoDrawer from "../Todo/TodoDrawer";
 import TodoList from "../Todo/TodoList";
+import useGlobalKeybindings from "@/keybindings/global-keybindings";
 
 export default function PageProject() {
   const { id } = useParams<{ id: string }>()
@@ -15,6 +16,8 @@ export default function PageProject() {
   const { todos } = useTodoSelectors()
 
   const projectTodos = todos.filter(t => t.projectId === id)
+
+  useGlobalKeybindings()
 
   useEffect(() => {
     if (id && !activeProject) {
