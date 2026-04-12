@@ -10,12 +10,12 @@ export interface UIState {
   setActiveIndex: (index: number) => void;
 }
 
-export const useUIStore = create<UIState>((set, get) => ({
+export const useUIStore = create<UIState>((set) => ({
   sidebarOpen: false,
   setSidebar: (open) => set({ sidebarOpen: open }),
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   editProjectOpen: false,
   setEditProject: (state: boolean) => set({ editProjectOpen: state }),
-  activeIndex: 0,
+  activeIndex: -1,
   setActiveIndex: (index: number) => set({ activeIndex: index })
 }));
