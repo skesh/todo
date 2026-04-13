@@ -11,7 +11,7 @@ export default function TodoDrawer() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'o') {
+      if (e.key === 'o' && !sidebarOpen) {
         if (!mode) {
           e.stopPropagation()
           e.preventDefault()

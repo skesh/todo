@@ -50,7 +50,7 @@ export function useSidebarKeybindings() {
         return
       }
 
-      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 300 && !editProjectOpen) {
+      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 300 && !editProjectOpen && sidebarOpen) {
         toggleSidebar()
         return
       }
@@ -62,7 +62,9 @@ export function useSidebarKeybindings() {
         return
       }
 
-      if (e.key === 'Escape' && sidebarOpen && !editProjectOpen) {
+      if (e.key === 'Escape' && sidebarOpen) {
+        e.stopPropagation()
+        e.preventDefault()
         if (editProjectOpen) {
           setEditProject(false)
         }
