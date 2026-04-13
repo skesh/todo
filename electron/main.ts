@@ -1,7 +1,8 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu, dialog } from 'electron'
 import Store from 'electron-store'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import fs from 'node:fs'
 import { ITodo } from '../src/interfaces/todo'
 import { IProject } from '@/interfaces/project'
 
@@ -48,6 +49,54 @@ function createWindow() {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(RENDERER_DIST, 'index.html'))
   }
+
+  async function exportData() {
+  const { filePath } = await dialog.showSaveDialog({
+    defaultPath: 'todos-backup.json',
+    filters: [{ name: 'JSON', extensions: ['json'] }]
+  })
+  if (filePath) {
+    const data = { items: store.get('items'), projects: store.get('projects') }
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+  }
+}
+
+async function importData() {
+  const { filePaths } = await dialog.showOpenDialog({
+    filters: [{ name: 'JSON', extensions: ['json'] }],
+    properties: ['openFile']
+  })
+  if (filePaths.length > 0) {
+    const data = JSON.parse(fs.readFileSync(filePaths[0], 'utf-8'))
+    if (data.items) store.set('items', data.items)
+    if (data.projects) store.set('projects', data.projects)
+  }
+}
+
+const template: Electron.MenuItemConstructorOptions[] = [
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Export Data',
+          accelerator: 'CmdOrCtrl+E',
+          click: exportData
+        },
+        {
+          label: 'Import Data',
+          accelerator: 'CmdOrCtrl+I',
+          click: importData
+        },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    },
+    { role: 'editMenu' },
+    { role: 'viewMenu' },
+    { role: 'windowMenu' }
+  ]
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -74,6 +123,10 @@ ipcMain.handle('store:get', (_event, key: string) => {
 
 ipcMain.handle('store:set', (_event, key: string, value: unknown) => {
   return store.set(key, value);
+})
+
+ipcMain.on('data:changed', () => {
+  win?.webContents.reload()
 })
 
 app.whenReady().then(() => {

@@ -50,7 +50,7 @@ export function useSidebarKeybindings() {
         return
       }
 
-      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 300 && !editProjectOpen && sidebarOpen) {
+      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 300 && !editProjectOpen) {
         toggleSidebar()
         return
       }
