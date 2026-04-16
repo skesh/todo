@@ -1,22 +1,19 @@
-import { useTags } from "@/hooks/useTags";
-import { useTodoStore } from "@/store/todosStore";
-import { useUIStore } from "@/store/uiStore.ts";
-import { EyeIcon } from "lucide-react";
-import { SidebarTrigger } from "../ui/sidebar.tsx";
-import { Toggle } from "../ui/toggle.tsx";
+import { EyeIcon } from 'lucide-react'
+import { useTodoStore } from '@/store/todosStore'
+import { useUIStore } from '@/store/uiStore.ts'
+import { SidebarTrigger } from '../ui/sidebar.tsx'
+import { Toggle } from '../ui/toggle.tsx'
 
 export default function Toolbar() {
-  const isFiltred = useTodoStore((s) => s.isFiltred);
-  const toogleFilter = useTodoStore((s) => s.toogleFilter)
+  const isFiltred = useTodoStore((s) => s.isFiltred)
+  const toogleFilter = useTodoStore((s) => s.toggleFilter)
   const toogleSidebar = useUIStore((s) => s.toggleSidebar)
-  const sidebarOpen = useUIStore((s) => s.sidebarOpen)
-  const tags = useTags()
 
   return (
-    <div className='flex items-center gap-4 justify-between px-2 py-2 shrink-0'>
+    <div className="flex items-center gap-4 justify-between px-2 py-2 shrink-0">
       <SidebarTrigger onClick={() => toogleSidebar()} />
 
-      <Toggle onClick={toogleFilter} pressed={isFiltred} className='gap-2'>
+      <Toggle onClick={toogleFilter} pressed={isFiltred} className="gap-2">
         <EyeIcon className="group-data-[state=on]/toggle:fill-foreground" />
         {isFiltred ? 'hidden' : 'show'}
       </Toggle>
@@ -27,6 +24,6 @@ export default function Toolbar() {
       {/*     <Badge variant="secondary" key={index}>{tag}</Badge> */}
       {/*   ))} */}
       {/* </div> */}
-    </div >
+    </div>
   )
 }

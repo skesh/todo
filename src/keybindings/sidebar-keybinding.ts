@@ -1,6 +1,6 @@
-import { useProjectStore } from "@/store/projectsStore";
-import { useUIStore } from "@/store/uiStore";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react'
+import { useProjectStore } from '@/store/projectsStore'
+import { useUIStore } from '@/store/uiStore'
 
 export function useSidebarKeybindings() {
   const sidebarOpen = useUIStore((s) => s.sidebarOpen)
@@ -15,13 +15,13 @@ export function useSidebarKeybindings() {
   const setProjectId = useProjectStore((s) => s.setId)
   const deleteProject = useProjectStore((s) => s.deleteProject)
 
-  const lastKeyRef = useRef<string | null>(null);
-  const lastTimeRef = useRef<number>(0);
+  const lastKeyRef = useRef<string | null>(null)
+  const lastTimeRef = useRef<number>(0)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const now = Date.now();
-      const timeDiff = now - lastTimeRef.current;
+      const now = Date.now()
+      const timeDiff = now - lastTimeRef.current
 
       if (e.key === 'j' && sidebarOpen && !editProjectOpen) {
         if (activeIndex < projects.length - 1) {
@@ -39,8 +39,8 @@ export function useSidebarKeybindings() {
           setActiveIndex(activeIndex - 1)
           setProjectId(projects[activeIndex - 1]?.id)
         } else {
-          setActiveIndex((projects.length - 1))
-          setProjectId(projects[(projects.length - 1)]?.id)
+          setActiveIndex(projects.length - 1)
+          setProjectId(projects[projects.length - 1]?.id)
         }
         return
       }
@@ -71,11 +71,21 @@ export function useSidebarKeybindings() {
         return
       }
 
-      lastKeyRef.current = e.key;
-      lastTimeRef.current = now;
+      lastKeyRef.current = e.key
+      lastTimeRef.current = now
     }
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [sidebarOpen, editProjectOpen, activeIndex, projects])
+  }, [
+    sidebarOpen,
+    editProjectOpen,
+    activeIndex,
+    projects,
+    setActiveIndex,
+    setProjectId,
+    deleteProject,
+    toggleSidebar,
+    setEditProject,
+  ])
 }
