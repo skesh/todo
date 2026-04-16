@@ -1,3 +1,6 @@
+import { nanoid } from 'nanoid'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 import {
   Sidebar,
   SidebarContent,
@@ -5,32 +8,32 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuItem
-} from "@/components/ui/sidebar"
-import { cn } from "@/lib/utils"
-import { useProjectActions, useProjectStore } from "@/store/projectsStore"
-import { useUIStore } from "@/store/uiStore.ts"
-import { nanoid } from "nanoid"
-import { useEffect, useState } from "react"
-import { Input } from "./ui/input"
-import { useNavigate } from "react-router"
-import { useSidebarKeybindings } from "@/keybindings/sidebar-keybinding"
+  SidebarMenuItem,
+} from '@/components/ui/sidebar'
+import { useSidebarKeybindings } from '@/keybindings/sidebar-keybinding'
+import { cn } from '@/lib/utils'
+import { useProjectActions, useProjectSelectors } from '@/store/projectsStore'
+import { useUIStore } from '@/store/uiStore.ts'
+import { Input } from './ui/input'
 
 export function AppSidebar() {
-  const projects = useProjectStore((s) => s.projects)
+  const { projects, activeProjectId } = useProjectSelectors()
   const { addProject } = useProjectActions()
   const editProjectOpen = useUIStore((s) => s.editProjectOpen)
   const setEditProject = useUIStore((s) => s.setEditProject)
-  const activeProjectId = useProjectStore((s) => s.activeId)
 
   const [name, setName] = useState('')
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useSidebarKeybindings()
 
+  const navigateToProject = (projectId: string) => {
+    navigate(`/project/${projectId}`)
+  }
+
   function submitProject() {
-    if (!!name.trim()) {
+    if (name.trim()) {
       addProject({ id: nanoid(), name, description: '', todoIds: [] })
       setName('')
       setEditProject(false)
@@ -39,13 +42,9 @@ export function AppSidebar() {
 
   useEffect(() => {
     if (activeProjectId) {
-      navigateToProject(activeProjectId);
+      navigate(`/project/${activeProjectId}`)
     }
-  }, [activeProjectId])
-
-  const navigateToProject = (projectId: string) => {
-    navigate(`/project/${projectId}`)
-  }
+  }, [activeProjectId, navigate])
 
   return (
     <Sidebar>
@@ -58,16 +57,21 @@ export function AppSidebar() {
                 <SidebarMenuItem
                   key={item.id}
                   onClick={() => navigateToProject(item.id)}
-                  className={cn('px-4', 'text-[16px]', (item.id === activeProjectId && 'bg-red-500'))}
-                >{item.name}</SidebarMenuItem>
+                  className={cn('px-4', 'text-[16px]', item.id === activeProjectId && 'bg-red-500')}
+                >
+                  {item.name}
+                </SidebarMenuItem>
               ))}
+
               {/* TODO: вынести в компонент */}
-              {editProjectOpen && <Input
-                autoFocus
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && submitProject()}
-              ></Input>}
+              {editProjectOpen && (
+                <Input
+                  autoFocus
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && submitProject()}
+                ></Input>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
