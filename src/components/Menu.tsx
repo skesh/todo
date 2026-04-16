@@ -1,7 +1,8 @@
 'use client'
 
-import { BracesIcon, FolderIcon, HomeIcon, InboxIcon, PlusIcon } from 'lucide-react'
+import { BracesIcon, FolderIcon, HomeIcon, InboxIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router'
 import {
   Command,
   CommandDialog,
@@ -10,7 +11,6 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from '@/components/ui/command'
 import { useProjectSelectors } from '@/store/projectsStore'
 import { useUiActions, useUiSeletors } from '@/store/uiStore'
@@ -19,7 +19,9 @@ export function CommandMenu() {
   const { menuOpen } = useUiSeletors()
   const { toggleMenu } = useUiActions()
   const { projects } = useProjectSelectors()
+  const navigate = useNavigate()
 
+  const listRef = useRef<HTMLDivElement>(null)
   const lastKeyRef = useRef<string | null>(null)
   const lastTimeRef = useRef<number>(0)
 
@@ -28,17 +30,46 @@ export function CommandMenu() {
       const now = Date.now()
       const timeDiff = now - lastTimeRef.current
 
-      if (e.key === 'Escape' && menuOpen) {
+      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 300) {
         e.preventDefault()
         toggleMenu()
-      }
-
-      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 300 && !menuOpen) {
-        e.preventDefault()
-        toggleMenu()
-        console.log('work')
         return
       }
+
+      if ((e.key === 'Escape' || e.key === 'q') && menuOpen) {
+        e.preventDefault()
+        toggleMenu()
+        return
+      }
+
+      if (menuOpen) {
+        if (e.key === 'j') {
+          e.preventDefault()
+          const listEl = listRef.current
+          if (listEl) {
+            listEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+          }
+          return
+        }
+
+        if (e.key === 'k') {
+          e.preventDefault()
+          const listEl = listRef.current
+          if (listEl) {
+            listEl.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true }))
+          }
+          return
+        }
+
+        if (e.key === 'Enter' || e.key === 'l') {
+          e.preventDefault()
+          const selected = listRef.current?.querySelector('[role="option"][aria-selected="true"]')
+          if (selected) {
+            selected.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+          }
+        }
+      }
+
       lastKeyRef.current = e.key
       lastTimeRef.current = now
     }
@@ -51,19 +82,22 @@ export function CommandMenu() {
     <div className="flex flex-col gap-4">
       <CommandDialog open={menuOpen}>
         <Command>
-          {/* <CommandInput placeholder="Type a command or search..." autoFocus={false} /> */}
-          <CommandList>
+          <CommandList ref={listRef}>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Navigation">
-              <CommandItem>
+              <CommandItem
+                value="home"
+                onSelect={() => {
+                  navigate('/')
+                  toggleMenu()
+                }}
+              >
                 <HomeIcon />
                 <span>Home</span>
-                <CommandShortcut>⌘H</CommandShortcut>
               </CommandItem>
-              <CommandItem>
+              <CommandItem value="inbox" onSelect={() => {}}>
                 <InboxIcon />
                 <span>Inbox</span>
-                <CommandShortcut>⌘I</CommandShortcut>
               </CommandItem>
             </CommandGroup>
             <CommandSeparator />
@@ -71,10 +105,16 @@ export function CommandMenu() {
             {projects.length > 0 && (
               <CommandGroup heading="Projects">
                 {projects.map((p) => (
-                  <CommandItem key={p.id}>
-                    <BracesIcon />
+                  <CommandItem
+                    key={p.id}
+                    value={p.id}
+                    onSelect={() => {
+                      navigate(`/project/${p.id} `)
+                      toggleMenu()
+                    }}
+                  >
+                    <FolderIcon />
                     <span>{p.name}</span>
-                    {/* <CommandShortcut>⌘N</CommandShortcut> */}
                   </CommandItem>
                 ))}
               </CommandGroup>
