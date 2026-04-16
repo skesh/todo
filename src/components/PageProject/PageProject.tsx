@@ -1,11 +1,11 @@
-import { IProject } from '@/interfaces/project'
+import { useParams } from 'react-router'
+import type { IProject } from '@/interfaces/project'
+import useGlobalKeybindings from '@/keybindings/global-keybindings'
 import { useProjectActions, useProjectSelectors } from '@/store/projectsStore'
 import { useTodoSelectors } from '@/store/todosStore'
-import { useParams } from 'react-router'
-import { Textarea } from '../ui/textarea'
 import TodoDrawer from '../Todo/TodoDrawer'
 import TodoList from '../Todo/TodoList'
-import useGlobalKeybindings from '@/keybindings/global-keybindings'
+import { Textarea } from '../ui/textarea'
 
 export default function PageProject() {
   const { id } = useParams<{ id: string }>()
@@ -19,7 +19,7 @@ export default function PageProject() {
 
   useGlobalKeybindings()
 
-  function updateProjectField(field: keyof IProject, value: any) {
+  function updateProjectField(field: keyof IProject, value: unknown) {
     if (id && activeProject) {
       editProject(id, { ...activeProject, [field]: value })
     }
