@@ -7,10 +7,7 @@ import styles from './todo.module.css'
 
 function Todo({ todo, isActive }: { todo: ITodo; isActive: boolean }) {
   return (
-    <Item
-      className={cn(`${isActive && styles.active}`, todo.done ? 'text-gray-300' : 'text-black')}
-      data-todo
-    >
+    <Item className={cn(`${isActive && styles.active}`, todo.done && 'text-neutral-600')} data-todo>
       <ItemMedia variant="icon">{todo.done ? <CircleDotIcon /> : <CircleIcon />}</ItemMedia>
       <ItemContent>
         <ItemTitle>

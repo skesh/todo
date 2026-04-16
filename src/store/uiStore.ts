@@ -1,21 +1,43 @@
-import { create } from "zustand";
+import { create } from 'zustand'
+import { useShallow } from 'zustand/shallow'
 
 export interface UIState {
-  sidebarOpen: boolean;
-  setSidebar: (open: boolean) => void;
-  toggleSidebar: () => void;
-  editProjectOpen: boolean;
-  setEditProject: (state: boolean) => void;
-  activeIndex: number;
-  setActiveIndex: (index: number) => void;
+  sidebarOpen: boolean
+  editProjectOpen: boolean
+  activeIndex: number
+  menuOpen: boolean
+  toggleSidebar: () => void
+  setEditProject: (state: boolean) => void
+  setActiveIndex: (index: number) => void
+  toggleMenu: () => void
 }
 
 export const useUIStore = create<UIState>((set) => ({
   sidebarOpen: false,
-  setSidebar: (open) => set({ sidebarOpen: open }),
-  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+  menuOpen: false,
   editProjectOpen: false,
-  setEditProject: (state: boolean) => set({ editProjectOpen: state }),
   activeIndex: -1,
-  setActiveIndex: (index: number) => set({ activeIndex: index })
-}));
+  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+  toggleMenu: () => set((state) => ({ menuOpen: !state.menuOpen })),
+  setEditProject: (state: boolean) => set({ editProjectOpen: state }),
+  setActiveIndex: (index: number) => set({ activeIndex: index }),
+}))
+
+export const useUiSeletors = () =>
+  useUIStore(
+    useShallow((s) => ({
+      sidebarOpen: s.sidebarOpen,
+      activeIndex: s.activeIndex,
+      menuOpen: s.menuOpen,
+    })),
+  )
+
+export const useUiActions = () =>
+  useUIStore(
+    useShallow((s) => ({
+      toggleSidebar: s.toggleSidebar,
+      setEditProject: s.setEditProject,
+      setActiveIndex: s.setActiveIndex,
+      toggleMenu: s.toggleMenu,
+    })),
+  )

@@ -50,11 +50,6 @@ export function useSidebarKeybindings() {
         return
       }
 
-      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 300 && !editProjectOpen) {
-        toggleSidebar()
-        return
-      }
-
       if (e.key === 'o' && sidebarOpen && !editProjectOpen) {
         e.stopPropagation()
         e.preventDefault()
