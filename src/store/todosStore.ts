@@ -1,19 +1,19 @@
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
-import type { ITodo } from '../interfaces/todo'
+import type { Todo } from '../interfaces/todo'
 
 export interface TodoState {
-  items: ITodo[]
+  items: Todo[]
   activeId: string | null
   mode: 'add' | 'edit' | false
   isFiltred: boolean
   initialized: boolean
   showDone: boolean
   initialize: () => Promise<void>
-  setItems: (items: ITodo[]) => void
+  setItems: (items: Todo[]) => void
   setActiveId: (index: string | null) => void
-  addItem: (item: ITodo) => void
-  editItemById: (id: string, item: ITodo) => void
+  addItem: (item: Todo) => void
+  editItemById: (id: string, item: Todo) => void
   deleteActiveTodo: () => void
   setMode: (mode: 'add' | 'edit' | false) => void
   toggleDone: (id: string) => void
@@ -32,21 +32,21 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   initialize: async () => {
     if (get().initialized) return
     set({ initialized: true })
-    const items = (await window.ipcRenderer.store.get('items')) as ITodo[]
+    const items = (await window.ipcRenderer.store.get('items')) as Todo[]
     set({ items })
   },
 
-  setItems: (items: ITodo[]) => {
+  setItems: (items: Todo[]) => {
     set({ items, mode: false })
     window.ipcRenderer.store.set('items', items)
   },
 
-  addItem: (item: ITodo) => {
+  addItem: (item: Todo) => {
     const { items, setItems } = get()
     setItems([...items, item])
   },
 
-  editItemById: (id: string, item: ITodo) => {
+  editItemById: (id: string, item: Todo) => {
     const { items, setItems } = get()
     const newArr = [...items].map((i) => (i.id === id ? item : i))
     setItems(newArr)

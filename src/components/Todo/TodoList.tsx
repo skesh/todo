@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import type { ITodo } from '@/interfaces/todo'
+import type { Todo } from '@/interfaces/todo'
 import useTodoListKeybindings from '@/keybindings/todolist-keybindings'
-import { useTodoSelectors, useTodoStore } from '../../store/todosStore'
-import Todo from './Todo'
+import { useTodoStore } from '../../store/todosStore'
+import TodoCard from './TodoCard'
 
-export default function TodoList({ todos }: { todos: ITodo[] }) {
+export default function TodoList({ todos }: { todos: Todo[] }) {
   const [activeIndex, setIndex] = useState(-1)
   const setActiveId = useTodoStore((s) => s.setActiveId)
 
@@ -39,7 +39,7 @@ export default function TodoList({ todos }: { todos: ITodo[] }) {
   return (
     <div className="flex flex-1 flex-col gap-1 w-full overflow-auto" ref={listRef}>
       {todos.length > 0 &&
-        todos.map((t, index) => <Todo todo={t} key={t.id} isActive={index === activeIndex} />)}
+        todos.map((t, index) => <TodoCard todo={t} key={t.id} isActive={index === activeIndex} />)}
     </div>
   )
 }

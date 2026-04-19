@@ -1,11 +1,11 @@
 import { CircleDotIcon, CircleIcon, FlameIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { ITodo } from '../../interfaces/todo'
+import type { Todo } from '../../interfaces/todo'
 import { Badge } from '../ui/badge'
 import { Item, ItemContent, ItemMedia, ItemTitle } from '../ui/item'
 import styles from './todo.module.css'
 
-function Todo({ todo, isActive }: { todo: ITodo; isActive: boolean }) {
+function TodoCard({ todo, isActive }: { todo: Todo; isActive: boolean }) {
   return (
     <Item className={cn(`${isActive && styles.active}`, todo.done && 'text-neutral-600')} data-todo>
       <ItemMedia variant="icon">{todo.done ? <CircleDotIcon /> : <CircleIcon />}</ItemMedia>
@@ -32,4 +32,4 @@ function Todo({ todo, isActive }: { todo: ITodo; isActive: boolean }) {
   )
 }
 
-export default Todo
+export default TodoCard

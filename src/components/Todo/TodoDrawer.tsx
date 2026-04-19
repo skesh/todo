@@ -1,13 +1,22 @@
-import { useTodoActions, useTodoSelectors } from "@/store/todosStore";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "../ui/drawer";
-import EditTodo from "./EditTodo";
-import { useEffect } from "react";
-import { useUIStore } from "@/store/uiStore";
+import { useEffect } from 'react'
+import { Todo } from '@/interfaces/todo'
+import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
+import { useUIStore } from '@/store/uiStore'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '../ui/drawer'
+import EditTodo from './EditTodo'
 
 export default function TodoDrawer() {
   const { mode } = useTodoSelectors()
   const { setMode } = useTodoActions()
   const sidebarOpen = useUIStore((s) => s.sidebarOpen)
+  const { activeTodo } = useTodoSelectors()
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -17,19 +26,19 @@ export default function TodoDrawer() {
           e.preventDefault()
           setMode('add')
         }
-        return;
+        return
       }
 
       if (e.key === 'Escape') {
         e.stopPropagation()
         e.preventDefault()
         setMode(false)
-        return;
+        return
       }
     }
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
   }, [mode, sidebarOpen])
 
   return (
@@ -40,7 +49,10 @@ export default function TodoDrawer() {
           <DrawerDescription>Description</DrawerDescription>
         </DrawerHeader>
         <DrawerFooter>
-          <EditTodo mode={mode} />
+          <EditTodo
+            mode={mode}
+            initialTodo={mode === 'edit' ? (activeTodo ?? new Todo()) : new Todo()}
+          />
           {/* <DrawerClose> */}
           {/*   <Button variant="outline">Cancel</Button> */}
           {/* </DrawerClose> */}

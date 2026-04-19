@@ -1,19 +1,19 @@
-import { app, BrowserWindow, ipcMain, Menu, dialog } from 'electron'
-import Store from 'electron-store'
+import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import fs from 'node:fs'
-import { ITodo } from '../src/interfaces/todo'
-import { IProject } from '@/interfaces/project'
+import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
+import Store from 'electron-store'
+import type { IProject } from '@/interfaces/project'
+import type { Todo } from '@/interfaces/todo'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const store = new Store<{ items: ITodo[], projects: IProject[] }>({
+const store = new Store<{ items: Todo[]; projects: IProject[] }>({
   name: 'Todos',
   defaults: {
     items: [],
-    projects: []
-  }
+    projects: [],
+  },
 })
 
 process.env.APP_ROOT = path.join(__dirname, '..')
@@ -23,7 +23,9 @@ export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
+  ? path.join(process.env.APP_ROOT, 'public')
+  : RENDERER_DIST
 
 let win: BrowserWindow | null
 
@@ -40,7 +42,7 @@ function createWindow() {
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', (new Date).toLocaleString())
+    win?.webContents.send('main-process-message', new Date().toLocaleString())
   })
 
   if (VITE_DEV_SERVER_URL) {
@@ -51,49 +53,49 @@ function createWindow() {
   }
 
   async function exportData() {
-  const { filePath } = await dialog.showSaveDialog({
-    defaultPath: 'todos-backup.json',
-    filters: [{ name: 'JSON', extensions: ['json'] }]
-  })
-  if (filePath) {
-    const data = { items: store.get('items'), projects: store.get('projects') }
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+    const { filePath } = await dialog.showSaveDialog({
+      defaultPath: 'todos-backup.json',
+      filters: [{ name: 'JSON', extensions: ['json'] }],
+    })
+    if (filePath) {
+      const data = { items: store.get('items'), projects: store.get('projects') }
+      fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+    }
   }
-}
 
-async function importData() {
-  const { filePaths } = await dialog.showOpenDialog({
-    filters: [{ name: 'JSON', extensions: ['json'] }],
-    properties: ['openFile']
-  })
-  if (filePaths.length > 0) {
-    const data = JSON.parse(fs.readFileSync(filePaths[0], 'utf-8'))
-    if (data.items) store.set('items', data.items)
-    if (data.projects) store.set('projects', data.projects)
+  async function importData() {
+    const { filePaths } = await dialog.showOpenDialog({
+      filters: [{ name: 'JSON', extensions: ['json'] }],
+      properties: ['openFile'],
+    })
+    if (filePaths.length > 0) {
+      const data = JSON.parse(fs.readFileSync(filePaths[0], 'utf-8'))
+      if (data.items) store.set('items', data.items)
+      if (data.projects) store.set('projects', data.projects)
+    }
   }
-}
 
-const template: Electron.MenuItemConstructorOptions[] = [
+  const template: Electron.MenuItemConstructorOptions[] = [
     {
       label: 'File',
       submenu: [
         {
           label: 'Export Data',
           accelerator: 'CmdOrCtrl+E',
-          click: exportData
+          click: exportData,
         },
         {
           label: 'Import Data',
           accelerator: 'CmdOrCtrl+I',
-          click: importData
+          click: importData,
         },
         { type: 'separator' },
-        { role: 'quit' }
-      ]
+        { role: 'quit' },
+      ],
     },
     { role: 'editMenu' },
     { role: 'viewMenu' },
-    { role: 'windowMenu' }
+    { role: 'windowMenu' },
   ]
   const menu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(menu)
@@ -118,11 +120,11 @@ app.on('activate', () => {
 })
 
 ipcMain.handle('store:get', (_event, key: string) => {
-  return store.get(key);
+  return store.get(key)
 })
 
 ipcMain.handle('store:set', (_event, key: string, value: unknown) => {
-  return store.set(key, value);
+  return store.set(key, value)
 })
 
 ipcMain.on('data:changed', () => {
@@ -130,7 +132,7 @@ ipcMain.on('data:changed', () => {
 })
 
 app.whenReady().then(() => {
-  createWindow();
+  createWindow()
   // globalShortcut.register('o', () => {
   //   // Создать новое todo
   //   win?.webContents.send('shortcut:new-todo');
