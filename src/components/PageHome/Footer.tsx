@@ -5,7 +5,7 @@ export default function Footer() {
   const activeId = useTodoStore((s) => s.activeId)
 
   return (
-    <div className='flex w-full shrink-0 gap-2 justify-end'>
+    <div className='sticky bottom-0 flex w-full shrink-0 gap-2 justify-end bg-background'>
       <span>{activeId}</span>
       <span>total: {items.length}</span>
     </div>
