@@ -2,14 +2,7 @@ import { useEffect } from 'react'
 import { Todo } from '@/interfaces/todo'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
 import { useUIStore } from '@/store/uiStore'
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from '../ui/drawer'
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '../ui/drawer'
 import EditTodo from './EditTodo'
 
 export default function TodoDrawer() {
@@ -43,20 +36,15 @@ export default function TodoDrawer() {
 
   return (
     <Drawer open={!!mode}>
-      <DrawerContent>
+      <DrawerContent className="px-4 py-4">
         <DrawerHeader hidden={true}>
           <DrawerTitle>Title</DrawerTitle>
           <DrawerDescription>Description</DrawerDescription>
         </DrawerHeader>
-        <DrawerFooter>
-          <EditTodo
-            mode={mode}
-            initialTodo={mode === 'edit' ? (activeTodo ?? new Todo()) : new Todo()}
-          />
-          {/* <DrawerClose> */}
-          {/*   <Button variant="outline">Cancel</Button> */}
-          {/* </DrawerClose> */}
-        </DrawerFooter>
+        <EditTodo
+          mode={mode}
+          initialTodo={mode === 'edit' ? (activeTodo ?? new Todo()) : new Todo()}
+        />
       </DrawerContent>
     </Drawer>
   )

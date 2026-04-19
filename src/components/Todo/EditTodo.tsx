@@ -82,7 +82,6 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
           )}
         />
       </Field>
-
       <div className="flex gap-4">
         <Field>
           <Controller
@@ -121,7 +120,6 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
           )}
         />
       </div>
-
       <Field>
         <Controller
           name="description"
@@ -135,7 +133,6 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
           )}
         />
       </Field>
-
       {projects.length > 0 && (
         <Controller
           name="projectId"
@@ -160,7 +157,6 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
           )}
         />
       )}
-
       <Controller
         name="priority"
         control={control}
