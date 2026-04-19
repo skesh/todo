@@ -1,12 +1,11 @@
-import { Formik } from 'formik'
 import { FlameIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { useProjectSelectors } from '@/store/projectsStore.ts'
 import { type TodoState, useTodoActions, useTodoSelectors } from '@/store/todosStore'
 import type { Todo } from '../../interfaces/todo.ts'
 import { Field } from '../ui/field.tsx'
 import { Input } from '../ui/input.tsx'
-import { Label } from '../ui/label.tsx'
 import {
   Select,
   SelectContent,
@@ -27,7 +26,12 @@ interface EditTodoProps {
 const repeatOptions = ['month', 'year', 'week']
 
 export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
-  const [todo, setTodo] = useState<Todo>(initialTodo)
+  const { control, handleSubmit, setValue, reset } = useForm<Todo>({
+    defaultValues: {
+      ...initialTodo,
+      repeat: initialTodo.repeat ?? '',
+    },
+  })
 
   const { activeTodo } = useTodoSelectors()
   const { addItem, editItemById } = useTodoActions()
@@ -36,83 +40,109 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
+    reset({
+      ...initialTodo,
+      repeat: initialTodo.repeat ?? '',
+    })
+  }, [initialTodo, reset])
+
+  useEffect(() => {
     inputRef.current?.focus()
 
-    if (mode === 'add') {
-      if (activeProjectId) {
-        setTodo({ ...todo, projectId: activeProjectId } as Todo)
-      }
+    if (mode === 'add' && activeProjectId) {
+      setValue('projectId', activeProjectId)
     }
-  }, [todo, mode])
+  }, [mode, activeProjectId, setValue])
 
-  function onSubmit(todo: Todo) {
+  function onSubmit(data: Todo) {
     if (mode === 'add') {
-      addItem(todo as Todo)
+      addItem(data)
     }
     if (mode === 'edit' && activeTodo) {
-      editItemById(activeTodo.id, todo)
+      editItemById(activeTodo.id, data)
     }
   }
 
   return (
-    <Formik initialValues={todo} onSubmit={(values) => onSubmit(values)}>
-      {({ values, handleChange, handleSubmit, setFieldValue }) => (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <Field>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <Field>
+        <Controller
+          name="title"
+          control={control}
+          render={({ field }) => (
             <Input
-              id="title"
-              value={values.title}
-              onChange={handleChange}
-              onKeyDown={(e) => e.key === 'Enter' && onSubmit(values)}
-              ref={inputRef}
+              {...field}
+              onKeyDown={(e) => e.key === 'Enter' && handleSubmit(onSubmit)()}
+              ref={(e) => {
+                field.ref(e)
+                inputRef.current = e
+              }}
               placeholder="Title"
             />
-          </Field>
+          )}
+        />
+      </Field>
 
-          <div className="flex gap-4">
-            <Field>
+      <div className="flex gap-4">
+        <Field>
+          <Controller
+            name="date"
+            control={control}
+            render={({ field }) => (
               <Input
-                id="date"
-                value={values.date}
-                onChange={handleChange}
-                onKeyDown={(e) => e.key === 'Enter' && onSubmit(values)}
+                {...field}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit(onSubmit)()}
                 placeholder="Start date"
               />
-            </Field>
+            )}
+          />
+        </Field>
 
+        <Controller
+          name="repeat"
+          control={control}
+          render={({ field }) => (
             <ToggleGroup
               type="single"
-              value={values.repeat}
+              value={field.value}
               className="items-end gap-4"
-              onValueChange={(value) => setFieldValue('repeat', value)}
+              onValueChange={field.onChange}
             >
               {repeatOptions.map((option) => (
                 <ToggleGroupItem
                   key={option}
                   value={option}
-                  className={
-                    !!values.repeat && values.repeat === option ? '!bg-[deeppink] !text-white' : ''
-                  }
+                  className={field.value === option ? '!bg-[deeppink] !text-white' : ''}
                 >
                   {option}
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
-          </div>
+          )}
+        />
+      </div>
 
-          <Field>
+      <Field>
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
             <Textarea
-              id="description"
-              value={values.description}
-              onChange={handleChange}
+              {...field}
               placeholder="Description"
-              onKeyDown={(e) => e.key === 'Enter' && onSubmit(values)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSubmit(onSubmit)()}
             />
-          </Field>
+          )}
+        />
+      </Field>
 
-          {projects.length > 0 && (
+      {projects.length > 0 && (
+        <Controller
+          name="projectId"
+          control={control}
+          render={({ field }) => (
             <Field>
-              <Select value={todo.projectId}>
+              <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Project" />
                 </SelectTrigger>
@@ -128,19 +158,26 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
               </Select>
             </Field>
           )}
+        />
+      )}
 
+      <Controller
+        name="priority"
+        control={control}
+        render={({ field }) => (
           <div className="flex gap-2">
             <Toggle
               aria-label="Toggle bookmark"
-              pressed={values.priority}
-              onPressedChange={() => setFieldValue('priority', !values.priority)}
+              pressed={field.value}
+              onPressedChange={field.onChange}
             >
               <FlameIcon className="group-data-[state=on]/toggle:fill-foreground" />
               High Priority
             </Toggle>
           </div>
-        </form>
-      )}
-    </Formik>
+        )}
+      />
+    </form>
   )
 }
+
