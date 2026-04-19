@@ -6,12 +6,9 @@ import Todo from './Todo'
 
 export default function TodoList({ todos }: { todos: ITodo[] }) {
   const [activeIndex, setIndex] = useState(-1)
-  const { showDone } = useTodoSelectors()
   const setActiveId = useTodoStore((s) => s.setActiveId)
 
   const listRef = useRef<HTMLDivElement>(null)
-
-  const filtredTodos = showDone ? todos : todos.filter((t) => !t.done)
 
   useTodoListKeybindings(activeIndex, todos.length, setIndex)
 
@@ -41,10 +38,8 @@ export default function TodoList({ todos }: { todos: ITodo[] }) {
 
   return (
     <div className="flex flex-1 flex-col gap-1 w-full overflow-auto" ref={listRef}>
-      {filtredTodos.length > 0 &&
-        filtredTodos.map((t, index) => (
-          <Todo todo={t} key={t.id} isActive={index === activeIndex} />
-        ))}
+      {todos.length > 0 &&
+        todos.map((t, index) => <Todo todo={t} key={t.id} isActive={index === activeIndex} />)}
     </div>
   )
 }

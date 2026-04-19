@@ -95,7 +95,13 @@ export function CommandMenu() {
                 <HomeIcon />
                 <span>Home</span>
               </CommandItem>
-              <CommandItem value="inbox" onSelect={() => {}}>
+              <CommandItem
+                value="inbox"
+                onSelect={() => {
+                  navigate('/inbox')
+                  toggleMenu()
+                }}
+              >
                 <InboxIcon />
                 <span>Inbox</span>
               </CommandItem>

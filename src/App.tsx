@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router'
 import { AppSidebar } from './components/AppSidebar.tsx'
 import { CommandMenu } from './components/Menu.tsx'
 import PageHome from './components/PageHome/PageHome.tsx'
+import PageInbox from './components/PageInbox.tsx'
 import PageProject from './components/PageProject/PageProject.tsx'
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar.tsx'
 import { useProjectStore } from './store/projectsStore.ts'
@@ -33,6 +34,7 @@ function App() {
           <CommandMenu />
           <Routes>
             <Route path="/" element={<PageHome />} />
+            <Route path="/inbox" element={<PageInbox />} />
             <Route path="/project/:id" element={<PageProject />} />
           </Routes>
         </SidebarInset>

@@ -1,11 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
-import { useUiActions, useUiSeletors } from '@/store/uiStore'
 
 export default function useGlobalKeybindings() {
-  const { menuOpen } = useUiSeletors()
-  const { toggleMenu } = useUiActions()
-
   const lastKeyRef = useRef<string | null>(null)
   const lastTimeRef = useRef<number>(0)
 
