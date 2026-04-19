@@ -1,7 +1,6 @@
 import { Formik } from 'formik'
 import { FlameIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { cn } from '@/lib/utils.ts'
 import { useProjectSelectors } from '@/store/projectsStore.ts'
 import { type TodoState, useTodoActions, useTodoSelectors } from '@/store/todosStore'
 import type { Todo } from '../../interfaces/todo.ts'
@@ -19,8 +18,6 @@ import {
 import { Textarea } from '../ui/textarea.tsx'
 import { Toggle } from '../ui/toggle.tsx'
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group.tsx'
-// import { TagInput } from '../ui-custom/TagInput.tsx'
-import styles from './EditTodo.module.css'
 
 interface EditTodoProps {
   initialTodo: Todo
@@ -36,8 +33,6 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
   const { addItem, editItemById } = useTodoActions()
   const { projects, activeProjectId } = useProjectSelectors()
 
-  // const globalTags = useTags()
-
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -51,7 +46,6 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
   }, [todo, mode])
 
   function onSubmit(todo: Todo) {
-    console.log(todo)
     if (mode === 'add') {
       addItem(todo as Todo)
     }
@@ -62,31 +56,43 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
 
   return (
     <Formik initialValues={todo} onSubmit={(values) => onSubmit(values)}>
-      {({ values, handleChange, handleSubmit }) => (
+      {({ values, handleChange, handleSubmit, setFieldValue }) => (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Field>
-            <Label htmlFor="title">Title</Label>
             <Input
               id="title"
               value={values.title}
               onChange={handleChange}
               onKeyDown={(e) => e.key === 'Enter' && onSubmit(values)}
               ref={inputRef}
+              placeholder="Title"
             />
           </Field>
 
           <div className="flex gap-4">
             <Field>
-              <Label>Date</Label>
-              <Input value={todo.date} onKeyDown={(e) => e.key === 'Enter' && onSubmit(values)} />
+              <Input
+                id="date"
+                value={values.date}
+                onChange={handleChange}
+                onKeyDown={(e) => e.key === 'Enter' && onSubmit(values)}
+                placeholder="Start date"
+              />
             </Field>
 
-            <ToggleGroup type="single" value={todo.repeat} className={styles.repeatContainer}>
+            <ToggleGroup
+              type="single"
+              value={values.repeat}
+              className="items-end gap-4"
+              onValueChange={(value) => setFieldValue('repeat', value)}
+            >
               {repeatOptions.map((option) => (
                 <ToggleGroupItem
                   key={option}
-                  className={cn(todo.repeat === option ? styles.activeItem : '', 'items-end')}
                   value={option}
+                  className={
+                    !!values.repeat && values.repeat === option ? '!bg-[deeppink] !text-white' : ''
+                  }
                 >
                   {option}
                 </ToggleGroupItem>
@@ -95,20 +101,19 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
           </div>
 
           <Field>
-            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              value={todo.description}
+              value={values.description}
               onChange={handleChange}
+              placeholder="Description"
               onKeyDown={(e) => e.key === 'Enter' && onSubmit(values)}
             />
           </Field>
 
           {projects.length > 0 && (
             <Field>
-              <Label>Project</Label>
               <Select value={todo.projectId}>
-                <SelectTrigger className="w-45">
+                <SelectTrigger>
                   <SelectValue placeholder="Project" />
                 </SelectTrigger>
                 <SelectContent>
@@ -124,18 +129,11 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
             </Field>
           )}
 
-          {/* <Field> */}
-          {/*   <Label htmlFor="tags">Tags</Label> */}
-          {/*   <TagInput tags={todo.tags} onChange={handleChange} suggestedTags={globalTags} /> */}
-          {/* </Field> */}
-
           <div className="flex gap-2">
             <Toggle
               aria-label="Toggle bookmark"
-              size="sm"
-              variant="outline"
-              pressed={todo.priority}
-              onPressedChange={handleChange}
+              pressed={values.priority}
+              onPressedChange={() => setFieldValue('priority', !values.priority)}
             >
               <FlameIcon className="group-data-[state=on]/toggle:fill-foreground" />
               High Priority

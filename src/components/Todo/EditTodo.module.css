@@ -1,9 +1,0 @@
-.activeItem {
-  background-color: red !important;
-  color: white !important;
-}
-
-.repeatContainer {
-  align-items: flex-end;
-  gap: 8px;
-}
