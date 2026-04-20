@@ -12,6 +12,7 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
   const { mode } = useTodoSelectors()
   const { menuOpen } = useUiSeletors()
   const listRef = useRef<HTMLDivElement>(null)
+  const lastKeyJPressAtRef = useRef(0)
 
   useEffect(() => {
     if (todos.length === 0) {
@@ -35,7 +36,10 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
     window,
     'KeyJ',
     () => {
-      if (todos.length === 0 || mode) return
+      if (todos.length === 0) return
+      const now = Date.now()
+      if (now - lastKeyJPressAtRef.current < 100) return
+      lastKeyJPressAtRef.current = now
       const next = activeIndex < todos.length - 1 && activeIndex !== -1 ? activeIndex + 1 : 0
       setActiveId(todos[next].id)
     },
@@ -47,6 +51,9 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
     'KeyK',
     () => {
       if (todos.length === 0) return
+      const now = Date.now()
+      if (now - lastKeyJPressAtRef.current < 100) return
+      lastKeyJPressAtRef.current = now
       const next = activeIndex > 0 ? activeIndex - 1 : todos.length - 1
       setActiveId(todos[next].id)
     },
