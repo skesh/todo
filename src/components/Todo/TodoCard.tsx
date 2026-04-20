@@ -7,7 +7,10 @@ import styles from './todo.module.css'
 
 function TodoCard({ todo, isActive }: { todo: Todo; isActive: boolean }) {
   return (
-    <Item className={cn(`${isActive && styles.active}`, todo.done && 'text-neutral-600')} data-todo>
+    <Item
+      className={cn(`${isActive && styles.active}`, todo.done && 'text-neutral-600')}
+      data-id={todo.id}
+    >
       <ItemMedia variant="icon">{todo.done ? <CircleDotIcon /> : <CircleIcon />}</ItemMedia>
       <ItemContent>
         <ItemTitle>
