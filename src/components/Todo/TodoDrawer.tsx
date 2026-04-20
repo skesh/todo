@@ -1,19 +1,17 @@
 import { useEffect } from 'react'
 import { Todo } from '@/interfaces/todo'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
-import { useUIStore } from '@/store/uiStore'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '../ui/drawer'
 import EditTodo from './EditTodo'
 
 export default function TodoDrawer() {
   const { mode } = useTodoSelectors()
   const { setMode } = useTodoActions()
-  const sidebarOpen = useUIStore((s) => s.sidebarOpen)
   const { activeTodo } = useTodoSelectors()
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'o' && !sidebarOpen) {
+      if (e.key === 'o') {
         if (!mode) {
           e.stopPropagation()
           e.preventDefault()
@@ -32,7 +30,7 @@ export default function TodoDrawer() {
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [mode, sidebarOpen])
+  }, [mode])
 
   return (
     <Drawer open={!!mode}>
