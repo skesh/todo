@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
+import { useUiActions } from '@/store/uiStore'
 
 export default function useGlobalKeybindings() {
+  const { toggleMenu } = useUiActions()
   const lastKeyRef = useRef<string | null>(null)
   const lastTimeRef = useRef<number>(0)
 
@@ -14,6 +16,11 @@ export default function useGlobalKeybindings() {
 
       if (e.key === 'h' && lastKeyRef.current === ',' && timeDiff < 300) {
         navigate('/')
+        return
+      }
+
+      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 500) {
+        toggleMenu()
         return
       }
 

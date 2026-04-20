@@ -1,10 +1,13 @@
 import { useFiltredTodos } from '@/hooks/useFiltredTodos'
+import useGlobalKeybindings from '@/keybindings/global-keybindings'
 import { useTodoSelectors } from '@/store/todosStore'
 import TodoList from '../Todo/TodoList'
 
 export default function PageHome() {
   const todos = useFiltredTodos() || []
   const { showDone } = useTodoSelectors()
+
+  useGlobalKeybindings()
 
   const homeTodos = showDone ? todos : todos.filter((t) => !t.done)
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { BracesIcon, FolderIcon, HomeIcon, InboxIcon } from 'lucide-react'
+import { FolderIcon, HomeIcon, InboxIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
 import {
@@ -26,15 +26,10 @@ export function CommandMenu() {
   const lastTimeRef = useRef<number>(0)
 
   useEffect(() => {
+    if (!menuOpen) return
+
     const down = (e: KeyboardEvent) => {
       const now = Date.now()
-      const timeDiff = now - lastTimeRef.current
-
-      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 300) {
-        e.preventDefault()
-        toggleMenu()
-        return
-      }
 
       if ((e.key === 'Escape' || e.key === 'q') && menuOpen) {
         e.preventDefault()
@@ -80,54 +75,56 @@ export function CommandMenu() {
 
   return (
     <div className="flex flex-col gap-4">
-      <CommandDialog open={menuOpen}>
-        <Command>
-          <CommandList ref={listRef}>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Navigation">
-              <CommandItem
-                value="home"
-                onSelect={() => {
-                  navigate('/')
-                  toggleMenu()
-                }}
-              >
-                <HomeIcon />
-                <span>Home</span>
-              </CommandItem>
-              <CommandItem
-                value="inbox"
-                onSelect={() => {
-                  navigate('/inbox')
-                  toggleMenu()
-                }}
-              >
-                <InboxIcon />
-                <span>Inbox</span>
-              </CommandItem>
-            </CommandGroup>
-            <CommandSeparator />
-
-            {projects.length > 0 && (
-              <CommandGroup heading="Projects">
-                {projects.map((p) => (
-                  <CommandItem
-                    key={p.id}
-                    value={p.id}
-                    onSelect={() => {
-                      navigate(`/project/${p.id} `)
-                      toggleMenu()
-                    }}
-                  >
-                    <FolderIcon />
-                    <span>{p.name}</span>
-                  </CommandItem>
-                ))}
+      {menuOpen && (
+        <CommandDialog open={menuOpen}>
+          <Command>
+            <CommandList ref={listRef}>
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup heading="Navigation">
+                <CommandItem
+                  value="home"
+                  onSelect={() => {
+                    navigate('/')
+                    toggleMenu()
+                  }}
+                >
+                  <HomeIcon />
+                  <span>Home</span>
+                </CommandItem>
+                <CommandItem
+                  value="inbox"
+                  onSelect={() => {
+                    navigate('/inbox')
+                    toggleMenu()
+                  }}
+                >
+                  <InboxIcon />
+                  <span>Inbox</span>
+                </CommandItem>
               </CommandGroup>
-            )}
-          </CommandList>
-        </Command>
-      </CommandDialog>
+              <CommandSeparator />
+
+              {projects.length > 0 && (
+                <CommandGroup heading="Projects">
+                  {projects.map((p) => (
+                    <CommandItem
+                      key={p.id}
+                      value={p.id}
+                      onSelect={() => {
+                        navigate(`/project/${p.id} `)
+                        toggleMenu()
+                      }}
+                    >
+                      <FolderIcon />
+                      <span>{p.name}</span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+            </CommandList>
+          </Command>
+        </CommandDialog>
+      )}
     </div>
   )
 }
