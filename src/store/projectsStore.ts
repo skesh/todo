@@ -11,7 +11,7 @@ interface ProjectsState {
   saveProjects: (projects: Project[]) => void
   addProject: (project: Project) => void
   setId: (id: string) => void
-  deleteProject: () => void
+  deleteById: (id: string) => void
   editProject: (id: string, project: Project) => void
 }
 
@@ -43,10 +43,10 @@ export const useProjectStore = create<ProjectsState>((set, get) => ({
     saveProjects(newProjects)
   },
 
-  deleteProject() {
-    const { projects, activeId, saveProjects } = get()
-    if (activeId) {
-      saveProjects([...projects.filter((p) => p.id !== activeId)])
+  deleteById(id: string) {
+    const { projects, saveProjects } = get()
+    if (id) {
+      saveProjects([...projects.filter((p) => p.id !== id)])
     }
   },
 
@@ -68,7 +68,7 @@ export const useProjectActions = () =>
       saveProjects: s.saveProjects,
       addProject: s.addProject,
       editProject: s.editProject,
-      deleteProject: s.deleteProject,
+      deleteById: s.deleteById,
       setId: s.setId,
     })),
   )

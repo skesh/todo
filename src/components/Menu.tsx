@@ -21,7 +21,7 @@ export function CommandMenu() {
   const { menuOpen } = useUiSeletors()
   const { toggleMenu } = useUiActions()
   const { projects } = useProjectSelectors()
-  const { addProject } = useProjectActions()
+  const { addProject, deleteById } = useProjectActions()
   const navigate = useNavigate()
 
   const [showAddProject, setShowAddProject] = useState(false)
@@ -80,6 +80,18 @@ export function CommandMenu() {
             selected.dispatchEvent(new MouseEvent('click', { bubbles: true }))
           }
         }
+
+        if (e.key === 'D' && !showAddProject) {
+          e.preventDefault()
+          const selected = listRef.current?.querySelector('[role="option"][aria-selected="true"]')
+          if (!selected) return
+          const raw = selected.getAttribute('data-value')
+          if (!raw) return
+          const value = decodeURIComponent(raw)
+          if (value === 'home' || value === 'inbox') return
+          if (!projects.some((p) => p.id === value)) return
+          handleDeleteById(value)
+        }
       }
 
       lastKeyRef.current = e.key
@@ -88,7 +100,7 @@ export function CommandMenu() {
 
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
-  }, [menuOpen])
+  }, [menuOpen, showAddProject, projects, toggleMenu])
 
   useEffect(() => {
     if (!menuOpen) {
@@ -105,6 +117,8 @@ export function CommandMenu() {
     setProjectName('')
     setShowAddProject(false)
   }
+
+  const handleDeleteById = (id: string) => deleteById(id)
 
   return (
     <div className="flex flex-col gap-4">

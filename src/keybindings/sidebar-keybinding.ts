@@ -13,7 +13,7 @@ export function useSidebarKeybindings() {
   const setActiveIndex = useUIStore((s) => s.setActiveIndex)
 
   const setProjectId = useProjectStore((s) => s.setId)
-  const deleteProject = useProjectStore((s) => s.deleteProject)
+  const deleteProject = useProjectStore((s) => s.deleteById)
 
   const lastKeyRef = useRef<string | null>(null)
   const lastTimeRef = useRef<number>(0)
