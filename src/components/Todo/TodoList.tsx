@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useHotkeys } from '@/hooks/useHotkeys'
 import type { Todo } from '@/interfaces/todo'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
+import { useUiSeletors } from '@/store/uiStore'
 import TodoCard from './TodoCard'
 
 export default function TodoList({ todos }: { todos: Todo[] }) {
@@ -9,6 +10,7 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
   const { setActiveId, setMode, deleteActiveTodo, toggleDone, toggleShowDone } = useTodoActions()
   const activeIndex = activeTodo ? todos.findIndex((todo) => todo.id === activeTodo.id) : -1
   const { mode } = useTodoSelectors()
+  const { menuOpen } = useUiSeletors()
 
   useEffect(() => {
     if (todos.length === 0) {
@@ -29,23 +31,35 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
       setActiveId(todos[next].id)
     },
     [activeIndex, todos, setActiveId],
+    { enabled: !mode && !menuOpen },
   )
   useHotkeys(
     window,
     'KeyK',
     () => {
-      if (todos.length === 0 || mode) return
+      if (todos.length === 0) return
       const next = activeIndex > 0 ? activeIndex - 1 : todos.length - 1
       setActiveId(todos[next].id)
     },
     [activeIndex, todos, setActiveId],
+    { enabled: !mode && !menuOpen },
   )
-  useHotkeys(window, 'KeyI', () => !mode && setMode('edit'))
-  useHotkeys(window, 'G', () => !mode && setActiveId(todos[0].id), [todos])
+  useHotkeys(window, 'KeyI', () => setMode('edit'), undefined, {
+    enabled: !mode && !menuOpen,
+  })
+  useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos], {
+    enabled: !mode && !menuOpen,
+  })
   // useHotkeys('g g', () => setIndex(0), { scopes: ['list'] }, [todos.length])
-  useHotkeys(window, 'D', () => deleteActiveTodo())
-  useHotkeys(window, 'd', () => activeTodo && toggleDone(activeTodo.id))
-  useHotkeys(window, 'KeyS', () => toggleShowDone())
+  useHotkeys(window, 'D', () => deleteActiveTodo(), undefined, {
+    enabled: !mode && !menuOpen,
+  })
+  useHotkeys(window, 'd', () => activeTodo && toggleDone(activeTodo.id), [activeTodo], {
+    enabled: !mode && !menuOpen,
+  })
+  useHotkeys(window, 'KeyS', () => toggleShowDone(), undefined, {
+    enabled: !mode && !menuOpen,
+  })
 
   return (
     <div className="flex flex-1 flex-col gap-1 w-full overflow-auto">
