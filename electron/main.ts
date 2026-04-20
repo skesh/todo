@@ -3,12 +3,12 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
 import Store from 'electron-store'
-import type { IProject } from '@/interfaces/project'
+import type { Project } from '@/interfaces/project'
 import type { Todo } from '@/interfaces/todo'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const store = new Store<{ items: Todo[]; projects: IProject[] }>({
+const store = new Store<{ items: Todo[]; projects: Project[] }>({
   name: 'Todos',
   defaults: {
     items: [],

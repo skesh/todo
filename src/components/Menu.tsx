@@ -1,25 +1,31 @@
 'use client'
 
 import { FolderIcon, HomeIcon, InboxIcon } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import {
   Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
-import { useProjectSelectors } from '@/store/projectsStore'
+import { Project } from '@/interfaces/project'
+import { useProjectActions, useProjectSelectors } from '@/store/projectsStore'
 import { useUiActions, useUiSeletors } from '@/store/uiStore'
 
 export function CommandMenu() {
   const { menuOpen } = useUiSeletors()
   const { toggleMenu } = useUiActions()
   const { projects } = useProjectSelectors()
+  const { addProject } = useProjectActions()
   const navigate = useNavigate()
+
+  const [showAddProject, setShowAddProject] = useState(false)
+  const [projectName, setProjectName] = useState('')
 
   const listRef = useRef<HTMLDivElement>(null)
   const lastKeyRef = useRef<string | null>(null)
@@ -31,14 +37,19 @@ export function CommandMenu() {
     const down = (e: KeyboardEvent) => {
       const now = Date.now()
 
-      if ((e.key === 'Escape' || e.key === 'q') && menuOpen) {
-        e.preventDefault()
-        toggleMenu()
-        return
-      }
-
       if (menuOpen) {
-        if (e.key === 'j') {
+        if (e.key === 'Escape' || e.key === 'q') {
+          e.preventDefault()
+          if (showAddProject) {
+            setShowAddProject(false)
+            return
+          } else {
+            toggleMenu()
+          }
+          return
+        }
+
+        if (e.key === 'j' && !showAddProject) {
           e.preventDefault()
           const listEl = listRef.current
           if (listEl) {
@@ -47,7 +58,13 @@ export function CommandMenu() {
           return
         }
 
-        if (e.key === 'k') {
+        if (e.key === 'a' && !showAddProject) {
+          e.preventDefault()
+          setShowAddProject(!showAddProject)
+          return
+        }
+
+        if (e.key === 'k' && !showAddProject) {
           e.preventDefault()
           const listEl = listRef.current
           if (listEl) {
@@ -56,7 +73,7 @@ export function CommandMenu() {
           return
         }
 
-        if (e.key === 'Enter' || e.key === 'l') {
+        if (e.key === 'Enter' || (e.key === 'l' && !showAddProject)) {
           e.preventDefault()
           const selected = listRef.current?.querySelector('[role="option"][aria-selected="true"]')
           if (selected) {
@@ -73,12 +90,42 @@ export function CommandMenu() {
     return () => document.removeEventListener('keydown', down)
   }, [menuOpen])
 
+  useEffect(() => {
+    if (!menuOpen) {
+      setShowAddProject(false)
+      setProjectName('')
+    }
+  }, [menuOpen])
+
+  function handleAddProject(name: string) {
+    const trimmedName = name.trim()
+    if (!trimmedName) return
+
+    addProject(new Project({ name: trimmedName }))
+    setProjectName('')
+    setShowAddProject(false)
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {menuOpen && (
-        <CommandDialog open={menuOpen}>
-          <Command>
-            <CommandList ref={listRef}>
+        <CommandDialog open={menuOpen} className="max-h-[70vh]">
+          <Command shouldFilter={false}>
+            {showAddProject && (
+              <CommandInput
+                placeholder="Add new project name..."
+                value={projectName}
+                onValueChange={(e) => setProjectName(e)}
+                onKeyDown={(e) => {
+                  if (e.key !== 'Enter') return
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleAddProject(projectName)
+                }}
+                autoFocus
+              />
+            )}
+            <CommandList ref={listRef} className="max-h-[calc(70vh-3rem)]">
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup heading="Navigation">
                 <CommandItem

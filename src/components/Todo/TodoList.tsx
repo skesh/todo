@@ -43,7 +43,7 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
       const next = activeIndex < todos.length - 1 && activeIndex !== -1 ? activeIndex + 1 : 0
       setActiveId(todos[next].id)
     },
-    [activeIndex, todos, setActiveId],
+    [activeIndex, todos, setActiveId, mode, menuOpen],
     { enabled: !mode && !menuOpen },
   )
   useHotkeys(
@@ -57,23 +57,23 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
       const next = activeIndex > 0 ? activeIndex - 1 : todos.length - 1
       setActiveId(todos[next].id)
     },
-    [activeIndex, todos, setActiveId],
+    [activeIndex, todos, setActiveId, mode, menuOpen],
     { enabled: !mode && !menuOpen },
   )
   useHotkeys(window, 'KeyI', () => setMode('edit'), undefined, {
     enabled: !mode && !menuOpen,
   })
-  useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos], {
+  useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos, menuOpen], {
     enabled: !mode && !menuOpen,
   })
   // useHotkeys('g g', () => setIndex(0), { scopes: ['list'] }, [todos.length])
-  useHotkeys(window, 'D', () => deleteActiveTodo(), undefined, {
+  useHotkeys(window, 'D', () => deleteActiveTodo(), [menuOpen], {
     enabled: !mode && !menuOpen,
   })
-  useHotkeys(window, 'd', () => activeTodo && toggleDone(activeTodo.id), [activeTodo], {
+  useHotkeys(window, 'd', () => activeTodo && toggleDone(activeTodo.id), [activeTodo, menuOpen], {
     enabled: !mode && !menuOpen,
   })
-  useHotkeys(window, 'KeyS', () => toggleShowDone(), undefined, {
+  useHotkeys(window, 'KeyS', () => toggleShowDone(), [menuOpen], {
     enabled: !mode && !menuOpen,
   })
 

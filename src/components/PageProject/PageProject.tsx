@@ -1,5 +1,5 @@
 import { useParams } from 'react-router'
-import type { IProject } from '@/interfaces/project'
+import type { Project } from '@/interfaces/project'
 import useGlobalKeybindings from '@/keybindings/global-keybindings'
 import { useProjectActions, useProjectSelectors } from '@/store/projectsStore'
 import { useTodoSelectors } from '@/store/todosStore'
@@ -19,7 +19,7 @@ export default function PageProject() {
 
   useGlobalKeybindings()
 
-  function updateProjectField(field: keyof IProject, value: unknown) {
+  function updateProjectField(field: keyof Project, value: unknown) {
     if (id && activeProject) {
       editProject(id, { ...activeProject, [field]: value })
     }
