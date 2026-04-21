@@ -10,7 +10,7 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
   const { setActiveId, setMode, deleteActiveTodo, toggleDone, toggleShowDone } = useTodoActions()
   const activeIndex = activeTodo ? todos.findIndex((todo) => todo.id === activeTodo.id) : -1
   const { mode } = useTodoSelectors()
-  const { menuOpen } = useUiSeletors()
+  const { menuOpen, editMode } = useUiSeletors()
   const listRef = useRef<HTMLDivElement>(null)
   const lastKeyJPressAtRef = useRef(0)
 
@@ -43,8 +43,8 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
       const next = activeIndex < todos.length - 1 && activeIndex !== -1 ? activeIndex + 1 : 0
       setActiveId(todos[next].id)
     },
-    [activeIndex, todos, setActiveId, mode, menuOpen],
-    { enabled: !mode && !menuOpen },
+    [activeIndex, todos, setActiveId, mode, menuOpen, editMode],
+    { enabled: !mode && !menuOpen && editMode === 'normal' },
   )
   useHotkeys(
     window,
@@ -57,25 +57,41 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
       const next = activeIndex > 0 ? activeIndex - 1 : todos.length - 1
       setActiveId(todos[next].id)
     },
-    [activeIndex, todos, setActiveId, mode, menuOpen],
-    { enabled: !mode && !menuOpen },
+    [activeIndex, todos, setActiveId, mode, menuOpen, editMode],
+    { enabled: !mode && !menuOpen && editMode === 'normal' },
   )
-  useHotkeys(window, 'KeyI', () => setMode('edit'), undefined, {
-    enabled: !mode && !menuOpen,
+  useHotkeys(window, 'KeyI', () => setMode('edit'), [editMode], {
+    enabled: !mode && !menuOpen && editMode === 'normal',
   })
-  useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos, menuOpen], {
-    enabled: !mode && !menuOpen,
+  useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos, menuOpen, editMode], {
+    enabled: !mode && !menuOpen && editMode === 'normal',
   })
   // useHotkeys('g g', () => setIndex(0), { scopes: ['list'] }, [todos.length])
-  useHotkeys(window, 'D', () => deleteActiveTodo(), [menuOpen], {
-    enabled: !mode && !menuOpen,
+  useHotkeys(window, 'D', () => deleteActiveTodo(), [menuOpen, editMode], {
+    enabled: !mode && !menuOpen && editMode === 'normal',
   })
-  useHotkeys(window, 'd', () => activeTodo && toggleDone(activeTodo.id), [activeTodo, menuOpen], {
-    enabled: !mode && !menuOpen,
-  })
-  useHotkeys(window, 'KeyS', () => toggleShowDone(), [menuOpen], {
-    enabled: !mode && !menuOpen,
-  })
+  useHotkeys(
+    window,
+    'd',
+    () => activeTodo && toggleDone(activeTodo.id),
+    [activeTodo, menuOpen, editMode],
+    {
+      enabled: !mode && !menuOpen && editMode === 'normal',
+    },
+  )
+  useHotkeys(
+    window,
+    'KeyS',
+    () => {
+      console.log(editMode)
+      toggleShowDone()
+      console.log(editMode)
+    },
+    [menuOpen, editMode],
+    {
+      enabled: !mode && !menuOpen && editMode === 'normal',
+    },
+  )
 
   return (
     <div ref={listRef} className="flex flex-1 flex-col gap-1 w-full overflow-auto">

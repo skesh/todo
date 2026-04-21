@@ -114,13 +114,7 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
         <Controller
           name="description"
           control={control}
-          render={({ field }) => (
-            <Textarea
-              {...field}
-              placeholder="Description"
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit(onSubmit)()}
-            />
-          )}
+          render={({ field }) => <Textarea {...field} placeholder="Description" />}
         />
       </Field>
       {projects.length > 0 && (
