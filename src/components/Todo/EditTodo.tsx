@@ -26,33 +26,23 @@ interface EditTodoProps {
 const repeatOptions = ['month', 'year', 'week']
 
 export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
-  const { control, handleSubmit, setValue, reset } = useForm<Todo>({
-    defaultValues: {
-      ...initialTodo,
-      repeat: initialTodo.repeat ?? '',
-    },
+  const { control, handleSubmit, reset } = useForm<Todo>({
+    defaultValues: initialTodo,
   })
 
   const { activeTodo } = useTodoSelectors()
   const { addItem, editItemById } = useTodoActions()
-  const { projects, activeProjectId } = useProjectSelectors()
+  const { projects } = useProjectSelectors()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    reset({
-      ...initialTodo,
-      repeat: initialTodo.repeat ?? '',
-    })
+    reset(initialTodo)
   }, [initialTodo, reset])
 
   useEffect(() => {
     inputRef.current?.focus()
-
-    if (mode === 'add' && activeProjectId) {
-      setValue('projectId', activeProjectId)
-    }
-  }, [mode, activeProjectId, setValue])
+  }, [mode])
 
   function onSubmit(data: Todo) {
     if (mode === 'add') {
@@ -176,4 +166,3 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
     </form>
   )
 }
-

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useParams } from 'react-router'
 import type { Project } from '@/interfaces/project'
 import useGlobalKeybindings from '@/keybindings/global-keybindings'
@@ -9,6 +10,8 @@ import { Textarea } from '../ui/textarea'
 
 export default function PageProject() {
   const { id } = useParams<{ id: string }>()
+  const { activeProjectId } = useProjectSelectors()
+  const { setId } = useProjectActions()
 
   const { projects } = useProjectSelectors()
   const { editProject } = useProjectActions()
@@ -18,6 +21,12 @@ export default function PageProject() {
   const projectTodos = todos.filter((t) => t.projectId === id)
 
   useGlobalKeybindings()
+
+  useEffect(() => {
+    if (activeProjectId !== id && id) {
+      setId(id)
+    }
+  })
 
   function updateProjectField(field: keyof Project, value: unknown) {
     if (id && activeProject) {

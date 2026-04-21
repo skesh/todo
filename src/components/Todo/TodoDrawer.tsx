@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Todo } from '@/interfaces/todo'
+import { useProjectSelectors } from '@/store/projectsStore'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '../ui/drawer'
 import EditTodo from './EditTodo'
@@ -8,6 +9,13 @@ export default function TodoDrawer() {
   const { mode } = useTodoSelectors()
   const { setMode } = useTodoActions()
   const { activeTodo } = useTodoSelectors()
+  const { activeProjectId } = useProjectSelectors()
+  const initialTodo = useMemo(() => {
+    if (mode === 'edit') {
+      return activeTodo ?? new Todo()
+    }
+    return new Todo({ projectId: activeProjectId ?? '' })
+  }, [mode, activeTodo, activeProjectId])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -39,10 +47,8 @@ export default function TodoDrawer() {
           <DrawerTitle>Title</DrawerTitle>
           <DrawerDescription>Description</DrawerDescription>
         </DrawerHeader>
-        <EditTodo
-          mode={mode}
-          initialTodo={mode === 'edit' ? (activeTodo ?? new Todo()) : new Todo()}
-        />
+
+        <EditTodo mode={mode} initialTodo={initialTodo} />
       </DrawerContent>
     </Drawer>
   )
