@@ -90,6 +90,7 @@ export function CommandMenu() {
           const value = decodeURIComponent(raw)
           if (value === 'home' || value === 'inbox') return
           if (!projects.some((p) => p.id === value)) return
+          navigate('/')
           handleDeleteById(value)
         }
       }
