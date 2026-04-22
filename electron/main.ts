@@ -119,6 +119,10 @@ app.on('activate', () => {
   }
 })
 
+ipcMain.handle('window:minimize', (event) => {
+  BrowserWindow.fromWebContents(event.sender)?.minimize()
+})
+
 ipcMain.handle('store:get', (_event, key: string) => {
   return store.get(key)
 })

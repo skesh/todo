@@ -1,4 +1,4 @@
-import { ipcRenderer, contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     get: (key: string) => ipcRenderer.invoke('store:get', key),
     set: (key: string, value: unknown) => ipcRenderer.invoke('store:set', key, value),
   },
-
+  minimize: () => ipcRenderer.invoke('window:minimize'),
   // You can expose other APTs you need here.
   // ...
 })

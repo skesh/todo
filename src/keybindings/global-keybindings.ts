@@ -24,6 +24,12 @@ export default function useGlobalKeybindings() {
         return
       }
 
+      if ((e.metaKey || e.ctrlKey) && e.code === 'KeyH') {
+        e.preventDefault()
+        window.ipcRenderer.invoke('window:minimize')
+        return
+      }
+
       lastKeyRef.current = e.key
       lastTimeRef.current = now
     }
