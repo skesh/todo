@@ -79,19 +79,9 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
       enabled: !mode && !menuOpen && editMode === 'normal',
     },
   )
-  useHotkeys(
-    window,
-    'KeyS',
-    () => {
-      console.log(editMode)
-      toggleShowDone()
-      console.log(editMode)
-    },
-    [menuOpen, editMode],
-    {
-      enabled: !mode && !menuOpen && editMode === 'normal',
-    },
-  )
+  useHotkeys(window, 'KeyS', () => toggleShowDone(), [menuOpen, editMode], {
+    enabled: !mode && !menuOpen && editMode === 'normal',
+  })
 
   return (
     <div ref={listRef} className="flex flex-1 flex-col gap-1 w-full overflow-auto">
