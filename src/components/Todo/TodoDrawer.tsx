@@ -1,9 +1,9 @@
+import { useMemo } from 'react'
 import { useHotkeys } from '@/hooks/useHotkeys'
 import { Todo } from '@/interfaces/todo'
 import { useProjectSelectors } from '@/store/projectsStore'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
 import { useUiSeletors } from '@/store/uiStore'
-import { useMemo } from 'react'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '../ui/drawer'
 import EditTodo from './EditTodo'
 
