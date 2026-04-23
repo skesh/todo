@@ -1,15 +1,18 @@
-import { useEffect, useMemo } from 'react'
+import { useHotkeys } from '@/hooks/useHotkeys'
 import { Todo } from '@/interfaces/todo'
 import { useProjectSelectors } from '@/store/projectsStore'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
+import { useUiSeletors } from '@/store/uiStore'
+import { useMemo } from 'react'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '../ui/drawer'
 import EditTodo from './EditTodo'
 
 export default function TodoDrawer() {
-  const { mode } = useTodoSelectors()
+  const { mode, activeTodo } = useTodoSelectors()
   const { setMode } = useTodoActions()
-  const { activeTodo } = useTodoSelectors()
   const { activeProjectId } = useProjectSelectors()
+  const { editMode } = useUiSeletors()
+
   const initialTodo = useMemo(() => {
     if (mode === 'edit') {
       return activeTodo ?? new Todo()
@@ -17,28 +20,13 @@ export default function TodoDrawer() {
     return new Todo({ projectId: activeProjectId ?? '' })
   }, [mode, activeTodo, activeProjectId])
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'o') {
-        if (!mode) {
-          e.stopPropagation()
-          e.preventDefault()
-          setMode('add')
-        }
-        return
-      }
+  useHotkeys(window, 'o', () => setMode('add'), [mode, editMode], {
+    enabled: !mode && editMode === 'normal',
+  })
 
-      if (e.key === 'Escape') {
-        e.stopPropagation()
-        e.preventDefault()
-        setMode(false)
-        return
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [mode])
+  useHotkeys(window, 'Escape', () => setMode(false), [mode], {
+    enabled: !!mode,
+  })
 
   return (
     <Drawer open={!!mode}>

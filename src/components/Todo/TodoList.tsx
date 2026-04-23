@@ -60,7 +60,7 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
     [activeIndex, todos, setActiveId, mode, menuOpen, editMode],
     { enabled: !mode && !menuOpen && editMode === 'normal' },
   )
-  useHotkeys(window, 'KeyI', () => setMode('edit'), [editMode], {
+  useHotkeys(window, 'KeyI', () => setMode('edit'), [mode, menuOpen, editMode], {
     enabled: !mode && !menuOpen && editMode === 'normal',
   })
   useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos, menuOpen, editMode], {
