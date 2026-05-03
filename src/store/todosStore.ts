@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
 import type { Todo } from '../interfaces/todo'
+import { useUiActions } from './uiStore'
 
 export interface TodoState {
   items: Todo[]
   activeId: string | null
-  mode: 'add' | 'edit' | false
   isFiltred: boolean
   initialized: boolean
   showDone: boolean
@@ -15,7 +15,6 @@ export interface TodoState {
   addItem: (item: Todo) => void
   editItemById: (id: string, item: Todo) => void
   deleteActiveTodo: () => void
-  setMode: (mode: 'add' | 'edit' | false) => void
   toggleDone: (id: string) => void
   toggleFilter: () => void
   toggleShowDone: () => void
@@ -25,7 +24,6 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   items: [],
   activeId: null,
   initialized: false,
-  mode: false,
   isFiltred: true,
   showDone: false,
 
@@ -37,7 +35,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   },
 
   setItems: (items: Todo[]) => {
-    set({ items, mode: false })
+    set({ items })
     window.ipcRenderer.store.set('items', items)
   },
 
@@ -53,7 +51,6 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   },
 
   setActiveId: (activeId: string | null) => set({ activeId }),
-  setMode: (mode) => set({ mode }),
 
   deleteActiveTodo: () => {
     const { activeId, items, setItems } = get()
@@ -83,7 +80,6 @@ export const useTodoActions = () =>
       addItem: s.addItem,
       editItemById: s.editItemById,
       setActiveId: s.setActiveId,
-      setMode: s.setMode,
       deleteActiveTodo: s.deleteActiveTodo,
       toggleFilter: s.toggleFilter,
       toggleDone: s.toggleDone,
@@ -96,7 +92,6 @@ export const useTodoSelectors = () =>
     useShallow((s) => ({
       todos: s.items,
       activeTodo: s.items.find((i) => i.id === s.activeId),
-      mode: s.mode,
       showDone: s.showDone,
     })),
   )

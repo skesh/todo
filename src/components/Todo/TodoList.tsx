@@ -2,15 +2,16 @@ import { useEffect, useRef } from 'react'
 import { useHotkeys } from '@/hooks/useHotkeys'
 import type { Todo } from '@/interfaces/todo'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
-import { useUiSeletors } from '@/store/uiStore'
+import { useUiActions, useUiSeletors } from '@/store/uiStore'
 import TodoCard from './TodoCard'
 
 export default function TodoList({ todos }: { todos: Todo[] }) {
   const { activeTodo } = useTodoSelectors()
-  const { setActiveId, setMode, deleteActiveTodo, toggleDone, toggleShowDone } = useTodoActions()
+  const { setActiveId, deleteActiveTodo, toggleDone, toggleShowDone } = useTodoActions()
+  const { menuOpen, editMode, todoOpen } = useUiSeletors()
+  const { setTodoOpen } = useUiActions()
+
   const activeIndex = activeTodo ? todos.findIndex((todo) => todo.id === activeTodo.id) : -1
-  const { mode } = useTodoSelectors()
-  const { menuOpen, editMode } = useUiSeletors()
   const listRef = useRef<HTMLDivElement>(null)
   const lastKeyJPressAtRef = useRef(0)
 
@@ -43,8 +44,8 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
       const next = activeIndex < todos.length - 1 && activeIndex !== -1 ? activeIndex + 1 : 0
       setActiveId(todos[next].id)
     },
-    [activeIndex, todos, setActiveId, mode, menuOpen, editMode],
-    { enabled: !mode && !menuOpen && editMode === 'normal' },
+    [activeIndex, todos, setActiveId, todoOpen, menuOpen, editMode],
+    { enabled: !todoOpen && !menuOpen && editMode === 'normal' },
   )
   useHotkeys(
     window,
@@ -57,18 +58,23 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
       const next = activeIndex > 0 ? activeIndex - 1 : todos.length - 1
       setActiveId(todos[next].id)
     },
-    [activeIndex, todos, setActiveId, mode, menuOpen, editMode],
-    { enabled: !mode && !menuOpen && editMode === 'normal' },
+    [activeIndex, todos, setActiveId, todoOpen, menuOpen, editMode],
+    { enabled: !todoOpen && !menuOpen && editMode === 'normal' },
   )
-  useHotkeys(window, 'KeyI', () => setMode('edit'), [mode, menuOpen, editMode], {
-    enabled: !mode && !menuOpen && editMode === 'normal',
+  useHotkeys(window, 'KeyI', () => setTodoOpen('edit'), [todoOpen, menuOpen, editMode], {
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
   })
   useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos, menuOpen, editMode], {
-    enabled: !mode && !menuOpen && editMode === 'normal',
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
   })
-  // useHotkeys('g g', () => setIndex(0), { scopes: ['list'] }, [todos.length])
+  useHotkeys(window, 'П', () => setActiveId(todos[0].id), [todos, menuOpen, editMode], {
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
+  })
   useHotkeys(window, 'D', () => deleteActiveTodo(), [menuOpen, editMode], {
-    enabled: !mode && !menuOpen && editMode === 'normal',
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
+  })
+  useHotkeys(window, 'Д', () => deleteActiveTodo(), [menuOpen, editMode], {
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
   })
   useHotkeys(
     window,
@@ -76,11 +82,11 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
     () => activeTodo && toggleDone(activeTodo.id),
     [activeTodo, menuOpen, editMode],
     {
-      enabled: !mode && !menuOpen && editMode === 'normal',
+      enabled: !todoOpen && !menuOpen && editMode === 'normal',
     },
   )
   useHotkeys(window, 'KeyS', () => toggleShowDone(), [menuOpen, editMode], {
-    enabled: !mode && !menuOpen && editMode === 'normal',
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
   })
 
   return (

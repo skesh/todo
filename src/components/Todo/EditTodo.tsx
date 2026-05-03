@@ -2,9 +2,9 @@ import { FlameIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useProjectSelectors } from '@/store/projectsStore.ts'
-import { type TodoState, useTodoActions, useTodoSelectors } from '@/store/todosStore'
+import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
+import { type UIState, useUiActions } from '@/store/uiStore.ts'
 import type { Todo } from '../../interfaces/todo.ts'
-import { DatePickerField } from '../ui-custom/DatePickerField.tsx'
 import { Field } from '../ui/field.tsx'
 import { Input } from '../ui/input.tsx'
 import {
@@ -21,12 +21,12 @@ import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group.tsx'
 
 interface EditTodoProps {
   initialTodo: Todo
-  mode: TodoState['mode']
+  todoOpen: UIState['todoOpen']
 }
 
 const repeatOptions = ['month', 'year', 'week']
 
-export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
+export default function EditTodo({ initialTodo, todoOpen }: EditTodoProps) {
   const { control, handleSubmit, reset } = useForm<Todo>({
     defaultValues: initialTodo,
   })
@@ -34,6 +34,7 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
   const { activeTodo } = useTodoSelectors()
   const { addItem, editItemById } = useTodoActions()
   const { projects } = useProjectSelectors()
+  const { setTodoOpen } = useUiActions()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -43,15 +44,18 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
 
   useEffect(() => {
     inputRef.current?.focus()
-  }, [mode])
+  }, [todoOpen])
 
   function onSubmit(data: Todo) {
-    if (mode === 'add') {
-      addItem(data)
+    switch (todoOpen) {
+      case 'add':
+        addItem(data)
+        break
+      case 'edit':
+        if (activeTodo) editItemById(activeTodo.id, data)
+        break
     }
-    if (mode === 'edit' && activeTodo) {
-      editItemById(activeTodo.id, data)
-    }
+    setTodoOpen(false)
   }
 
   return (

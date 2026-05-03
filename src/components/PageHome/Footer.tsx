@@ -1,11 +1,11 @@
 import { cn } from '@/lib/utils'
-import { useTodoSelectors, useTodoStore } from '@/store/todosStore'
+import { useTodoStore } from '@/store/todosStore'
 import { useUiSeletors } from '@/store/uiStore'
 
 export default function Footer() {
   const items = useTodoStore((s) => s.items)
   const activeId = useTodoStore((s) => s.activeId)
-  const { mode } = useTodoSelectors()
+  const { todoOpen } = useUiSeletors()
   const { menuOpen, editMode } = useUiSeletors()
 
   return (
@@ -20,7 +20,7 @@ export default function Footer() {
       </div>
       <div className="ml-auto">
         <span>MENU: {menuOpen.toString()}</span>
-        <span>MODE: {mode.toString()}</span>
+        <span>MODE: {todoOpen.toString()}</span>
         <span>Active TODO ID: {activeId}</span>
         <span>total: {items.length}</span>
       </div>

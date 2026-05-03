@@ -1,4 +1,4 @@
-import { isBefore, parse } from 'date-fns'
+import { isAfter, parse, startOfDay } from 'date-fns'
 import { useMemo } from 'react'
 import type { Todo } from '@/interfaces/todo'
 import { useTodoStore } from '@/store/todosStore'
@@ -11,7 +11,8 @@ export function useFiltredTodos() {
     const result = isFiltred
       ? items.filter(
           (i: Todo) =>
-            !i.date || (!!i.date && isBefore(parse(i.date, 'dd.MM.yyyy', new Date()), new Date())),
+            !i.date ||
+            !isAfter(startOfDay(parse(i.date, 'dd.MM.yyyy', new Date())), startOfDay(new Date())),
         )
       : items
     return result.sort((a, b) => +b.priority - +a.priority)
