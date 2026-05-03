@@ -1,8 +1,8 @@
 # Plan
 
 ## 1. Дата начала — date picker
-- [ ] Заменить text input на shadcn/ui `Calendar` + `Popover`
-- [ ] Починить баг фильтра: задачи на сегодня не показываются (`isBefore` → `!isAfter`)
+- [x] Заменить text input на shadcn/ui `Calendar` + `Popover`
+- [x] Починить баг фильтра: задачи на сегодня не показываются (`isBefore` → `!isAfter`)
 <!-- - [ ] Определиться с `endDate`: убрать или задействовать -->
 
 ## 2. Отображение по времени

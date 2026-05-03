@@ -6,12 +6,12 @@ export interface UIState {
   editProjectOpen: boolean
   activeIndex: number
   menuOpen: boolean
-  editMode: string
+  editMode: 'normal' | 'edit'
   toggleSidebar: () => void
   setEditProject: (state: boolean) => void
   setActiveIndex: (index: number) => void
   toggleMenu: () => void
-  setMode: (mode: 'edit' | 'normal') => void
+  setMode: (mode: UIState['editMode']) => void
 }
 
 export const useUIStore = create<UIState>((set, get) => ({
@@ -24,7 +24,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   toggleMenu: () => set((state) => ({ menuOpen: !state.menuOpen })),
   setEditProject: (state: boolean) => set({ editProjectOpen: state }),
   setActiveIndex: (index: number) => set({ activeIndex: index }),
-  setMode: (editMode: string) => get().editMode !== editMode && set({ editMode }),
+  setMode: (editMode: UIState['editMode']) => get().editMode !== editMode && set({ editMode }),
 }))
 
 export const useUiSeletors = () =>

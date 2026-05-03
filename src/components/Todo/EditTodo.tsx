@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useProjectSelectors } from '@/store/projectsStore.ts'
 import { type TodoState, useTodoActions, useTodoSelectors } from '@/store/todosStore'
 import type { Todo } from '../../interfaces/todo.ts'
+import { DatePickerField } from '../ui-custom/DatePickerField.tsx'
 import { Field } from '../ui/field.tsx'
 import { Input } from '../ui/input.tsx'
 import {
@@ -73,19 +74,11 @@ export default function EditTodo({ initialTodo, mode }: EditTodoProps) {
         />
       </Field>
       <div className="flex gap-4">
-        <Field>
-          <Controller
-            name="date"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                onKeyDown={(e) => e.key === 'Enter' && handleSubmit(onSubmit)()}
-                placeholder="Start date"
-              />
-            )}
-          />
-        </Field>
+        <Controller
+          name="date"
+          control={control}
+          render={({ field }) => <DatePickerField field={field} placeholder="Start date" />}
+        />
 
         <Controller
           name="repeat"
