@@ -5,6 +5,7 @@ import { useProjectSelectors } from '@/store/projectsStore.ts'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
 import { type UIState, useUiActions } from '@/store/uiStore.ts'
 import type { Todo } from '../../interfaces/todo.ts'
+import { REPEAT_PERIODS } from '../../interfaces/todo.ts'
 import { Field } from '../ui/field.tsx'
 import { Input } from '../ui/input.tsx'
 import {
@@ -24,8 +25,6 @@ interface EditTodoProps {
   initialTodo: Todo
   todoOpen: UIState['todoOpen']
 }
-
-const repeatOptions = ['month', 'year', 'week']
 
 export default function EditTodo({ initialTodo, todoOpen }: EditTodoProps) {
   const { control, handleSubmit, reset } = useForm<Todo>({
@@ -144,7 +143,7 @@ export default function EditTodo({ initialTodo, todoOpen }: EditTodoProps) {
               className="items-end gap-4"
               onValueChange={field.onChange}
             >
-              {repeatOptions.map((option) => (
+              {REPEAT_PERIODS.map((option) => (
                 <ToggleGroupItem
                   key={option}
                   value={option}

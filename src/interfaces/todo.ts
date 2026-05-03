@@ -1,4 +1,8 @@
+import { addDays, addMonths, addWeeks, addYears, format, parse } from 'date-fns'
 import { nanoid } from 'nanoid'
+
+export const REPEAT_PERIODS = ['day', 'week', 'month', 'year'] as const
+export type repeatPeriod = (typeof REPEAT_PERIODS)[number]
 
 export class Todo {
   id: string
@@ -10,7 +14,7 @@ export class Todo {
   time: string
   endDate: string
   projectId: string
-  repeat: string
+  repeat: repeatPeriod | undefined
   created: string
   doneDate: string
   done: boolean = false
@@ -25,9 +29,22 @@ export class Todo {
     this.time = todo?.time || ''
     this.endDate = todo?.endDate || ''
     this.projectId = todo?.projectId || ''
-    this.repeat = todo?.repeat || ''
+    this.repeat = todo?.repeat
     this.created = todo?.created || new Date().toISOString()
     this.doneDate = todo?.doneDate || ''
     this.done = todo?.done || false
+  }
+
+  repeatNext(): Todo {
+    const parsed = parse(this.date, 'dd.MM.yyyy', new Date())
+    const nextDate = () => {
+      switch (this.repeat) {
+        case 'day': return addDays(parsed, 1)
+        case 'week': return addWeeks(parsed, 1)
+        case 'month': return addMonths(parsed, 1)
+        case 'year': return addYears(parsed, 1)
+      }
+    }
+    return new Todo({ ...this, id: nanoid(), date: format(nextDate()!, 'dd.MM.yyyy') })
   }
 }

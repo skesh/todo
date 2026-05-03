@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import { useShallow } from 'zustand/shallow'
-import type { Todo } from '../interfaces/todo'
-import { useUiActions } from './uiStore'
+import { Todo } from '../interfaces/todo'
 
 export interface TodoState {
   items: Todo[]
@@ -31,7 +30,7 @@ export const useTodoStore = create<TodoState>((set, get) => ({
     if (get().initialized) return
     set({ initialized: true })
     const items = (await window.ipcRenderer.store.get('items')) as Todo[]
-    set({ items })
+    set({ items: (items || []).map((i) => new Todo(i)) })
   },
 
   setItems: (items: Todo[]) => {
@@ -41,12 +40,12 @@ export const useTodoStore = create<TodoState>((set, get) => ({
 
   addItem: (item: Todo) => {
     const { items, setItems } = get()
-    setItems([...items, item])
+    setItems([...items, new Todo(item)])
   },
 
   editItemById: (id: string, item: Todo) => {
     const { items, setItems } = get()
-    const newArr = [...items].map((i) => (i.id === id ? item : i))
+    const newArr = [...items].map((i) => (i.id === id ? new Todo(item) : i))
     setItems(newArr)
   },
 
@@ -58,14 +57,20 @@ export const useTodoStore = create<TodoState>((set, get) => ({
   },
 
   toggleDone: (id: string) => {
-    const { editItemById, items } = get()
+    const { editItemById, items, addItem } = get()
     const todo = items.find((i) => i.id === id)
     if (todo) {
-      editItemById(id, {
-        ...todo,
-        done: !todo.done,
-        doneDate: todo.done ? '' : new Date().toString(),
-      })
+      if (todo.repeat && !todo.done) {
+        addItem(todo.repeatNext())
+      }
+      editItemById(
+        id,
+        new Todo({
+          ...todo,
+          done: !todo.done,
+          doneDate: todo.done ? '' : new Date().toISOString(),
+        }),
+      )
     }
   },
 
