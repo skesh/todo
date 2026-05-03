@@ -78,49 +78,7 @@ export default function EditTodo({ initialTodo, todoOpen }: EditTodoProps) {
           )}
         />
       </Field>
-      <div className="flex gap-4">
-        <Controller
-          name="date"
-          control={control}
-          render={({ field }) => <DatePickerField field={field} placeholder="Start date" />}
-        />
 
-        <Controller
-          name="time"
-          control={control}
-          render={({ field }) => (
-            <Input
-              {...field}
-              type="time"
-              className="w-auto"
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit(onSubmit)()}
-            />
-          )}
-        />
-
-        <Controller
-          name="repeat"
-          control={control}
-          render={({ field }) => (
-            <ToggleGroup
-              type="single"
-              value={field.value}
-              className="items-end gap-4"
-              onValueChange={field.onChange}
-            >
-              {repeatOptions.map((option) => (
-                <ToggleGroupItem
-                  key={option}
-                  value={option}
-                  className={field.value === option ? '!bg-[deeppink] !text-white' : ''}
-                >
-                  {option}
-                </ToggleGroupItem>
-              ))}
-            </ToggleGroup>
-          )}
-        />
-      </div>
       <Field>
         <Controller
           name="description"
@@ -128,6 +86,7 @@ export default function EditTodo({ initialTodo, todoOpen }: EditTodoProps) {
           render={({ field }) => <Textarea {...field} placeholder="Description" />}
         />
       </Field>
+
       {projects.length > 0 && (
         <Controller
           name="projectId"
@@ -152,6 +111,53 @@ export default function EditTodo({ initialTodo, todoOpen }: EditTodoProps) {
           )}
         />
       )}
+
+      <div className="flex justify-between">
+        <div className="flex gap-4">
+          <Controller
+            name="date"
+            control={control}
+            render={({ field }) => <DatePickerField field={field} placeholder="Start date" />}
+          />
+
+          <Controller
+            name="time"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="time"
+                className="w-auto"
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit(onSubmit)()}
+              />
+            )}
+          />
+        </div>
+
+        <Controller
+          name="repeat"
+          control={control}
+          render={({ field }) => (
+            <ToggleGroup
+              type="single"
+              value={field.value}
+              className="items-end gap-4"
+              onValueChange={field.onChange}
+            >
+              {repeatOptions.map((option) => (
+                <ToggleGroupItem
+                  key={option}
+                  value={option}
+                  className={field.value === option ? '!bg-[deeppink] !text-white' : ''}
+                >
+                  {option}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          )}
+        />
+      </div>
+
       <Controller
         name="priority"
         control={control}
