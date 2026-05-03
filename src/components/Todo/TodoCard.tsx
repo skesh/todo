@@ -1,8 +1,7 @@
-import { CircleDotIcon, CircleIcon, FlameIcon } from 'lucide-react'
+import { CircleDotIcon, CircleIcon, FlameIcon, RepeatIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useProjectSelectors } from '@/store/projectsStore'
 import type { Todo } from '../../interfaces/todo'
-import { Badge } from '../ui/badge'
 import { Item, ItemContent, ItemMedia, ItemTitle } from '../ui/item'
 import styles from './todo.module.css'
 
@@ -19,11 +18,12 @@ function TodoCard({ todo, isActive }: { todo: Todo; isActive: boolean }) {
         <ItemTitle>
           <span>{todo.title}</span>
           {todo.priority && <FlameIcon className="text-red-800" />}
+          {todo.repeat && <RepeatIcon size="12px" color={isActive ? 'white' : 'deeppink'} />}
         </ItemTitle>
         {/* <ItemDescription>{todo.description}</ItemDescription> */}
       </ItemContent>
       <div>
-        {todo.date} {todo?.time && todo.time}
+        {todo?.date} {todo?.time && todo.time}
       </div>
       <div className="flex gap-1">
         {/* {todo.tags?.length > 0 && */}
@@ -32,9 +32,7 @@ function TodoCard({ todo, isActive }: { todo: Todo; isActive: boolean }) {
         {/*       {t} */}
         {/*     </Badge> */}
         {/*   ))} */}
-        {todo.projectId && (
-          <Badge variant="link">{projects.find((p) => p.id === todo.projectId)?.name}</Badge>
-        )}
+        {todo.projectId && projects.find((p) => p.id === todo.projectId)?.name}
       </div>
       {/* <ItemActions> */}
       {/*   <Button>Action</Button> */}

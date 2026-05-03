@@ -2,12 +2,11 @@ import { format, isValid, parse } from 'date-fns'
 import { CalendarIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 import type { ControllerRenderProps } from 'react-hook-form'
+import { DATE_FORMAT } from '@/config/config.ts'
 import { useUiActions } from '@/store/uiStore'
 import { Button } from '../ui/button.tsx'
 import { Calendar } from '../ui/calendar.tsx'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover.tsx'
-
-const DATE_FORMAT = 'dd.MM.yyyy'
 
 interface DatePickerFieldProps {
   field: Pick<ControllerRenderProps, 'value' | 'onChange'>

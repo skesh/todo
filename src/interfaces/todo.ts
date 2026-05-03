@@ -1,5 +1,6 @@
 import { addDays, addMonths, addWeeks, addYears, format, parse } from 'date-fns'
 import { nanoid } from 'nanoid'
+import { DATE_FORMAT } from '@/config/config'
 
 export const REPEAT_PERIODS = ['day', 'week', 'month', 'year'] as const
 export type repeatPeriod = (typeof REPEAT_PERIODS)[number]
@@ -39,12 +40,16 @@ export class Todo {
     const parsed = parse(this.date, 'dd.MM.yyyy', new Date())
     const nextDate = () => {
       switch (this.repeat) {
-        case 'day': return addDays(parsed, 1)
-        case 'week': return addWeeks(parsed, 1)
-        case 'month': return addMonths(parsed, 1)
-        case 'year': return addYears(parsed, 1)
+        case 'day':
+          return addDays(parsed, 1)
+        case 'week':
+          return addWeeks(parsed, 1)
+        case 'month':
+          return addMonths(parsed, 1)
+        case 'year':
+          return addYears(parsed, 1)
       }
     }
-    return new Todo({ ...this, id: nanoid(), date: format(nextDate()!, 'dd.MM.yyyy') })
+    return new Todo({ ...this, id: nanoid(), date: format(nextDate()!, DATE_FORMAT) })
   }
 }
