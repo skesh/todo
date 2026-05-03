@@ -23,7 +23,7 @@ export function DatePickerField({ field, placeholder = 'Date' }: DatePickerField
 
   function handleOpenChange(next: boolean) {
     setOpen(next)
-    setMode(next ? 'edit' : 'normal')
+    setMode(next ? 'normal' : 'edit')
   }
 
   function handleSelect(date: Date | undefined) {

@@ -18,6 +18,7 @@ import {
 import { Textarea } from '../ui/textarea.tsx'
 import { Toggle } from '../ui/toggle.tsx'
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group.tsx'
+import { DatePickerField } from '../ui-custom/DatePickerField.tsx'
 
 interface EditTodoProps {
   initialTodo: Todo
@@ -82,6 +83,19 @@ export default function EditTodo({ initialTodo, todoOpen }: EditTodoProps) {
           name="date"
           control={control}
           render={({ field }) => <DatePickerField field={field} placeholder="Start date" />}
+        />
+
+        <Controller
+          name="time"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="time"
+              className="w-auto"
+              onKeyDown={(e) => e.key === 'Enter' && handleSubmit(onSubmit)()}
+            />
+          )}
         />
 
         <Controller

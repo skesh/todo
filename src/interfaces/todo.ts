@@ -7,6 +7,7 @@ export class Todo {
   tags: string[]
   priority: boolean
   date: string
+  time: string
   endDate: string
   projectId: string
   repeat: string
@@ -21,6 +22,7 @@ export class Todo {
     this.tags = todo?.tags || []
     this.priority = todo?.priority || false
     this.date = todo?.date || ''
+    this.time = todo?.time || ''
     this.endDate = todo?.endDate || ''
     this.projectId = todo?.projectId || ''
     this.repeat = todo?.repeat || ''

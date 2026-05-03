@@ -22,7 +22,9 @@ function TodoCard({ todo, isActive }: { todo: Todo; isActive: boolean }) {
         </ItemTitle>
         {/* <ItemDescription>{todo.description}</ItemDescription> */}
       </ItemContent>
-      <div>{todo.date}</div>
+      <div>
+        {todo.date} {todo?.time && todo.time}
+      </div>
       <div className="flex gap-1">
         {/* {todo.tags?.length > 0 && */}
         {/*   todo.tags.map((t) => ( */}
@@ -30,7 +32,9 @@ function TodoCard({ todo, isActive }: { todo: Todo; isActive: boolean }) {
         {/*       {t} */}
         {/*     </Badge> */}
         {/*   ))} */}
-        {todo.projectId && <Badge variant="link">{projects.find(p => p.id === todo.projectId)?.name}</Badge>}
+        {todo.projectId && (
+          <Badge variant="link">{projects.find((p) => p.id === todo.projectId)?.name}</Badge>
+        )}
       </div>
       {/* <ItemActions> */}
       {/*   <Button>Action</Button> */}
