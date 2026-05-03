@@ -17,7 +17,7 @@ function TodoCard({ todo, isActive }: { todo: Todo; isActive: boolean }) {
       <ItemContent>
         <ItemTitle>
           <span>{todo.title}</span>
-          {todo.priority && <FlameIcon className="text-red-800" />}
+          {todo.priority && <FlameIcon  color={isActive ? 'white' : 'red'} size="14px" />}
           {todo.repeat && <RepeatIcon size="12px" color={isActive ? 'white' : 'deeppink'} />}
         </ItemTitle>
         {/* <ItemDescription>{todo.description}</ItemDescription> */}
