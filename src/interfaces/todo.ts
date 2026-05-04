@@ -16,6 +16,7 @@ export class Todo {
   endDate: string
   projectId: string
   repeat: repeatPeriod | undefined
+  dependsOn: string[]
   created: string
   doneDate: string
   done: boolean = false
@@ -31,6 +32,7 @@ export class Todo {
     this.endDate = todo?.endDate || ''
     this.projectId = todo?.projectId || ''
     this.repeat = todo?.repeat
+    this.dependsOn = todo?.dependsOn || []
     this.created = todo?.created || new Date().toISOString()
     this.doneDate = todo?.doneDate || ''
     this.done = todo?.done || false

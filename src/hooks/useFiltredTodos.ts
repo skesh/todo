@@ -11,8 +11,9 @@ export function useFiltredTodos() {
     const result = isFiltred
       ? items.filter(
           (i: Todo) =>
-            !i.date ||
-            !isAfter(startOfDay(parse(i.date, 'dd.MM.yyyy', new Date())), startOfDay(new Date())),
+            (!i.date ||
+              !isAfter(startOfDay(parse(i.date, 'dd.MM.yyyy', new Date())), startOfDay(new Date()))) &&
+            i.dependsOn.every((depId) => items.find((t) => t.id === depId)?.done),
         )
       : items
     return result.sort((a, b) => +b.priority - +a.priority)
