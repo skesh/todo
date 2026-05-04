@@ -1,12 +1,10 @@
 import { cn } from '@/lib/utils'
-import { useTodoStore } from '@/store/todosStore'
+import { useTodoSelectors } from '@/store/todosStore'
 import { useUiSeletors } from '@/store/uiStore'
 
 export default function Footer() {
-  const items = useTodoStore((s) => s.items)
-  const activeId = useTodoStore((s) => s.activeId)
-  const { todoOpen } = useUiSeletors()
-  const { menuOpen, editMode } = useUiSeletors()
+  const { todos, activeTodo, showDone } = useTodoSelectors()
+  const { editMode } = useUiSeletors()
 
   return (
     <div className="sticky bottom-0 flex w-full shrink-0 gap-2 bg-background items-center">
@@ -18,11 +16,10 @@ export default function Footer() {
       >
         {editMode.toUpperCase()}
       </div>
-      <div className="ml-auto">
-        <span>MENU: {menuOpen.toString()}</span>
-        <span>MODE: {todoOpen.toString()}</span>
-        <span>Active TODO ID: {activeId}</span>
-        <span>total: {items.length}</span>
+        <span>Hidden: {showDone ? 'false' : 'true'}</span>
+      <div className="flex ml-auto gap-4">
+        {activeTodo && <span>Active ID: {activeTodo?.id}</span>}
+        <span>Total: {todos.length}</span>
       </div>
     </div>
   )

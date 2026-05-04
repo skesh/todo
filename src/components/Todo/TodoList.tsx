@@ -6,7 +6,7 @@ import { useUiActions, useUiSeletors } from '@/store/uiStore'
 import TodoCard from './TodoCard'
 
 export default function TodoList({ todos }: { todos: Todo[] }) {
-  const { activeTodo } = useTodoSelectors()
+  const { activeTodo, showDone } = useTodoSelectors()
   const { setActiveId, deleteActiveTodo, toggleDone, toggleShowDone } = useTodoActions()
   const { menuOpen, editMode, todoOpen } = useUiSeletors()
   const { setTodoOpen } = useUiActions()
@@ -70,16 +70,39 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
   useHotkeys(window, 'П', () => setActiveId(todos[0].id), [todos, menuOpen, editMode], {
     enabled: !todoOpen && !menuOpen && editMode === 'normal',
   })
-  useHotkeys(window, 'D', () => deleteActiveTodo(), [menuOpen, editMode], {
-    enabled: !todoOpen && !menuOpen && editMode === 'normal',
-  })
-  useHotkeys(window, 'Д', () => deleteActiveTodo(), [menuOpen, editMode], {
-    enabled: !todoOpen && !menuOpen && editMode === 'normal',
-  })
+  useHotkeys(
+    window,
+    'D',
+    () => {
+      deleteActiveTodo()
+      moveActiveOnPrevTodoDone()
+    },
+    [menuOpen, editMode],
+    {
+      enabled: !todoOpen && !menuOpen && editMode === 'normal',
+    },
+  )
+  useHotkeys(
+    window,
+    'Д',
+    () => {
+      deleteActiveTodo()
+      moveActiveOnPrevTodoDone()
+    },
+    [menuOpen, editMode],
+    {
+      enabled: !todoOpen && !menuOpen && editMode === 'normal',
+    },
+  )
   useHotkeys(
     window,
     'd',
-    () => activeTodo && toggleDone(activeTodo.id),
+    () => {
+      if (activeTodo) {
+        moveActiveOnPrevTodoDone()
+        toggleDone(activeTodo.id)
+      }
+    },
     [activeTodo, menuOpen, editMode],
     {
       enabled: !todoOpen && !menuOpen && editMode === 'normal',
@@ -88,6 +111,12 @@ export default function TodoList({ todos }: { todos: Todo[] }) {
   useHotkeys(window, 'KeyS', () => toggleShowDone(), [menuOpen, editMode], {
     enabled: !todoOpen && !menuOpen && editMode === 'normal',
   })
+
+  function moveActiveOnPrevTodoDone() {
+    if (activeTodo?.done || showDone) return
+    const index = todos.findIndex((t) => t.id === activeTodo?.id)
+    if (index && index > 0) setActiveId(todos[index - 1].id)
+  }
 
   return (
     <div ref={listRef} className="flex flex-1 flex-col gap-1 w-full overflow-auto">
