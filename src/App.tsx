@@ -8,10 +8,9 @@ import PageInbox from './components/PageInbox.tsx'
 import PageProject from './components/PageProject/PageProject.tsx'
 import TodoDrawer from './components/Todo/TodoDrawer.tsx'
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar.tsx'
-import { useHotkeys } from './hooks/useHotkeys.ts'
 import { useProjectStore } from './store/projectsStore.ts'
 import { useTodoStore } from './store/todosStore'
-import { useUiActions, useUiSelectors } from './store/uiStore.ts'
+import { useUiSelectors } from './store/uiStore.ts'
 
 function App() {
   const initializeProjects = useProjectStore((s) => s.initialize)
@@ -31,8 +30,8 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="flex min-h-screen flex-col">
-        <SidebarProvider open={sidebarOpen}>
+      <div>
+        <SidebarProvider open={sidebarOpen} className="flex min-h-screen flex-col">
           <AppSidebar />
           <SidebarInset>
             <CommandMenu />
