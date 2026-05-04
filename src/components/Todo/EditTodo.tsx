@@ -1,16 +1,13 @@
-import { CheckIcon, ChevronDownIcon, FlameIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { FlameIcon } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useProjectSelectors } from '@/store/projectsStore.ts'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
 import { type UIState, useUiActions } from '@/store/uiStore.ts'
 import type { Todo } from '../../interfaces/todo.ts'
 import { REPEAT_PERIODS } from '../../interfaces/todo.ts'
-import { Button } from '../ui/button.tsx'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command.tsx'
 import { Field } from '../ui/field.tsx'
 import { Input } from '../ui/input.tsx'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover.tsx'
 import {
   Select,
   SelectContent,
@@ -23,6 +20,7 @@ import { Textarea } from '../ui/textarea.tsx'
 import { Toggle } from '../ui/toggle.tsx'
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group.tsx'
 import { DatePickerField } from '../ui-custom/DatePickerField.tsx'
+import { MultiSelect } from '../ui-custom/MultiSelect.tsx'
 
 interface EditTodoProps {
   initialTodo: Todo
@@ -38,7 +36,6 @@ export default function EditTodo({ initialTodo, todoOpen }: EditTodoProps) {
   const { addItem, editItemById } = useTodoActions()
   const { projects } = useProjectSelectors()
   const { setTodoOpen } = useUiActions()
-  const [depsOpen, setDepsOpen] = useState(false)
 
   const otherTodos = todos.filter((t) => t.id !== initialTodo.id && !t.done)
 
@@ -186,41 +183,14 @@ export default function EditTodo({ initialTodo, todoOpen }: EditTodoProps) {
           control={control}
           render={({ field }) => (
             <Field>
-              <Popover open={depsOpen} onOpenChange={setDepsOpen}>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="justify-between font-normal text-muted-foreground">
-                    {field.value?.length ? `${field.value.length} dependenc${field.value.length > 1 ? 'ies' : 'y'}` : 'Depends on…'}
-                    <ChevronDownIcon className="size-4" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-64 p-0" align="start">
-                  <Command>
-                    <CommandInput placeholder="Search…" />
-                    <CommandList>
-                      <CommandEmpty>No tasks found</CommandEmpty>
-                      <CommandGroup>
-                        {otherTodos.map((t) => {
-                          const selected = field.value?.includes(t.id)
-                          return (
-                            <CommandItem
-                              key={t.id}
-                              onSelect={() => {
-                                const next = selected
-                                  ? field.value.filter((id: string) => id !== t.id)
-                                  : [...(field.value ?? []), t.id]
-                                field.onChange(next)
-                              }}
-                            >
-                              <CheckIcon className={selected ? 'opacity-100' : 'opacity-0'} />
-                              {t.title || '(no title)'}
-                            </CommandItem>
-                          )
-                        })}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+              <MultiSelect
+                options={otherTodos.map((t) => ({ value: t.id, label: t.title || '(no title)' }))}
+                selected={field.value ?? []}
+                onChange={field.onChange}
+                placeholder="Depends on…"
+                searchPlaceholder="Search…"
+                emptyText="No tasks found"
+              />
             </Field>
           )}
         />

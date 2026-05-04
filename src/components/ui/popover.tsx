@@ -2,11 +2,24 @@ import * as React from "react"
 import { Popover as PopoverPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
+import { useUiActions } from "@/store/uiStore"
 
 function Popover({
+  onOpenChange,
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Root>) {
-  return <PopoverPrimitive.Root data-slot="popover" {...props} />
+  const { setMode } = useUiActions()
+
+  return (
+    <PopoverPrimitive.Root
+      data-slot="popover"
+      onOpenChange={(open) => {
+        setMode(open ? 'edit' : 'normal')
+        onOpenChange?.(open)
+      }}
+      {...props}
+    />
+  )
 }
 
 function PopoverTrigger({
