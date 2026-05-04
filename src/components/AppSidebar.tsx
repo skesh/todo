@@ -16,6 +16,11 @@ import { useProjectActions, useProjectSelectors } from '@/store/projectsStore'
 import { useUiActions, useUiSelectors } from '@/store/uiStore.ts'
 import { Input } from './ui/input'
 
+const STATIC_NAV = [
+  { id: 'home', name: 'Home', route: '/' },
+  { id: 'inbox', name: 'Inbox', route: '/inbox' },
+]
+
 export function AppSidebar() {
   const { projects } = useProjectSelectors()
   const { addProject, setId } = useProjectActions()
@@ -26,16 +31,24 @@ export function AppSidebar() {
   const [name, setName] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
 
-  const navigateToProject = (id: string) => {
-    navigate(`/project/${id}`)
+  const navItems = [
+    ...STATIC_NAV,
+    ...projects.map((p) => ({ id: p.id, name: p.name, route: `/project/${p.id}` })),
+  ]
+
+  const onEnter = () => {
+    const item = navItems[activeIndex]
+    if (!item) return
+    navigate(item.route)
     toggleSidebar()
   }
 
-  useSidebarKeybindings(activeIndex, setActiveIndex, navigateToProject)
+  useSidebarKeybindings(activeIndex, setActiveIndex, navItems.length, onEnter)
 
   useEffect(() => {
-    if (activeIndex) {
-      setId(projects[activeIndex]?.id)
+    const projectIndex = activeIndex - STATIC_NAV.length
+    if (projectIndex >= 0 && projects[projectIndex]) {
+      setId(projects[projectIndex].id)
     }
   }, [activeIndex, projects])
 
@@ -51,27 +64,45 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
+          <SidebarMenu className="gap-1">
+            {STATIC_NAV.map((item, i) => (
+              <SidebarMenuItem
+                key={item.id}
+                onClick={() => { navigate(item.route); toggleSidebar() }}
+                className={cn('px-4', 'text-[16px]', i === activeIndex && 'bg-[deeppink]', 'rounded-[4px]')}
+              >
+                {item.name}
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
+        <SidebarGroup>
           <SidebarGroupLabel>Projects</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-1">
-              {projects.map((item, index) => (
+              {projects.map((item, i) => (
                 <SidebarMenuItem
                   key={item.id}
-                  onClick={() => navigateToProject(item.id)}
-                  className={cn('px-4', 'text-[16px]', index === activeIndex && 'bg-[deeppink]', 'rounded-[4px]')}
+                  onClick={() => { navigate(`/project/${item.id}`); toggleSidebar() }}
+                  className={cn(
+                    'px-4',
+                    'text-[16px]',
+                    i + STATIC_NAV.length === activeIndex && 'bg-[deeppink]',
+                    'rounded-[4px]',
+                  )}
                 >
                   {item.name}
                 </SidebarMenuItem>
               ))}
 
-              {/* TODO: вынести в компонент */}
               {editProjectOpen && (
                 <Input
                   autoFocus
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && submitProject()}
-                ></Input>
+                />
               )}
             </SidebarMenu>
           </SidebarGroupContent>
