@@ -49,7 +49,7 @@ export function CommandMenu() {
           return
         }
 
-        if (e.key === 'j' && !showAddProject) {
+        if ((e.key === 'j' || e.key === 'о') && !showAddProject) {
           e.preventDefault()
           const listEl = listRef.current
           if (listEl) {
@@ -58,13 +58,13 @@ export function CommandMenu() {
           return
         }
 
-        if (e.key === 'a' && !showAddProject) {
+        if ((e.key === 'a' || e.key === 'ф') && !showAddProject) {
           e.preventDefault()
           setShowAddProject(!showAddProject)
           return
         }
 
-        if (e.key === 'k' && !showAddProject) {
+        if ((e.key === 'k' || e.key === 'л') && !showAddProject) {
           e.preventDefault()
           const listEl = listRef.current
           if (listEl) {
@@ -73,7 +73,7 @@ export function CommandMenu() {
           return
         }
 
-        if (e.key === 'Enter' || (e.key === 'l' && !showAddProject)) {
+        if (e.key === 'Enter' || ((e.key === 'l' || e.key === 'д') && !showAddProject)) {
           e.preventDefault()
           const selected = listRef.current?.querySelector('[role="option"][aria-selected="true"]')
           if (selected) {

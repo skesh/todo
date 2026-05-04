@@ -1,17 +1,22 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router'
+import { AppSidebar } from './components/AppSidebar.tsx'
 import { CommandMenu } from './components/Menu.tsx'
 import Footer from './components/PageHome/Footer.tsx'
 import PageHome from './components/PageHome/PageHome.tsx'
 import PageInbox from './components/PageInbox.tsx'
 import PageProject from './components/PageProject/PageProject.tsx'
 import TodoDrawer from './components/Todo/TodoDrawer.tsx'
+import { SidebarInset, SidebarProvider } from './components/ui/sidebar.tsx'
+import { useHotkeys } from './hooks/useHotkeys.ts'
 import { useProjectStore } from './store/projectsStore.ts'
 import { useTodoStore } from './store/todosStore'
+import { useUiActions, useUiSelectors } from './store/uiStore.ts'
 
 function App() {
   const initializeProjects = useProjectStore((s) => s.initialize)
   const initializeTodos = useTodoStore((s) => s.initialize)
+  const { sidebarOpen } = useUiSelectors()
 
   useEffect(() => {
     initializeTodos()
@@ -27,19 +32,19 @@ function App() {
   return (
     <BrowserRouter>
       <div className="flex min-h-screen flex-col">
-        {/* <SidebarProvider open={sidebarOpen}> */}
-        {/*   <AppSidebar /> */}
-        {/*   <SidebarInset> */}
-        <CommandMenu />
-        {/* <Toolbar /> */}
-        <Routes>
-          <Route path="/" element={<PageHome />} />
-          <Route path="/inbox" element={<PageInbox />} />
-          <Route path="/project/:id" element={<PageProject />} />
-        </Routes>
-        <div className="flex-1" />
-        {/*   </SidebarInset> */}
-        {/* </SidebarProvider> */}
+        <SidebarProvider open={sidebarOpen}>
+          <AppSidebar />
+          <SidebarInset>
+            <CommandMenu />
+            {/* <Toolbar /> */}
+            <Routes>
+              <Route path="/" element={<PageHome />} />
+              <Route path="/inbox" element={<PageInbox />} />
+              <Route path="/project/:id" element={<PageProject />} />
+            </Routes>
+            <div className="flex-1" />
+          </SidebarInset>
+        </SidebarProvider>
 
         <Footer />
         <TodoDrawer />

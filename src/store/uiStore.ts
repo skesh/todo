@@ -25,7 +25,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   editMode: 'normal',
   toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
   toggleMenu: () => set((state) => ({ menuOpen: !state.menuOpen })),
-  setEditProject: (state: boolean) => set({ editProjectOpen: state }),
+  setEditProject: (editProjectOpen: boolean) => set({ editProjectOpen }),
   setActiveIndex: (index: number) => set({ activeIndex: index }),
   setTodoOpen: (todoOpen: UIState['todoOpen']) => set({ todoOpen }),
   setMode: (editMode: UIState['editMode']) => get().editMode !== editMode && set({ editMode }),
@@ -39,6 +39,7 @@ export const useUiSelectors = () =>
       menuOpen: s.menuOpen,
       todoOpen: s.todoOpen,
       editMode: s.editMode,
+      editProjectOpen: s.editProjectOpen,
     })),
   )
 

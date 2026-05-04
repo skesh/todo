@@ -1,13 +1,17 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
-import { useUiActions } from '@/store/uiStore'
+import { useHotkeys } from '@/hooks/useHotkeys'
+import { useUiActions, useUiSelectors } from '@/store/uiStore'
 
 export default function useGlobalKeybindings() {
-  const { toggleMenu } = useUiActions()
+  const { toggleMenu, toggleSidebar } = useUiActions()
+  const { editMode, todoOpen } = useUiSelectors()
   const lastKeyRef = useRef<string | null>(null)
   const lastTimeRef = useRef<number>(0)
 
   const navigate = useNavigate()
+
+  useHotkeys(window, 'KeyH', () => toggleSidebar(), [editMode, todoOpen], { enabled: !todoOpen && editMode === 'normal' })
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
