@@ -17,7 +17,8 @@ export default function PageHome() {
       todos
         .filter((t) => (showDone ? t : !t.done))
         .filter((t) => (t.date ? isAfter(new Date(), parse(t.date, DATE_FORMAT, new Date())) : t))
-        .filter((t) => t.dependsOn.every((depId) => todos.find((t) => t.id === depId)?.done)),
+        .filter((t) => t.dependsOn.every((depId) => todos.find((t) => t.id === depId)?.done))
+        .sort((a, b) => (Number(b.priority) - Number(a.priority)))
     )
   }, [todos, showDone])
 

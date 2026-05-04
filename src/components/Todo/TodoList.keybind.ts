@@ -12,6 +12,7 @@ export function useTodoListKeybindings(todos: Todo[], activeIndex: number) {
   const { menuOpen, editMode, todoOpen, sidebarOpen } = useUiSelectors()
 
   const hotkeysEnable = !todoOpen && !menuOpen && editMode === 'normal' && !sidebarOpen
+  const hotkeysDeps = [todos, menuOpen, editMode, sidebarOpen, todoOpen]
 
   useHotkeys(
     window,
@@ -24,7 +25,7 @@ export function useTodoListKeybindings(todos: Todo[], activeIndex: number) {
       const next = activeIndex < todos.length - 1 && activeIndex !== -1 ? activeIndex + 1 : 0
       setActiveId(todos[next].id)
     },
-    [activeIndex, todos, setActiveId, todoOpen, menuOpen, editMode, sidebarOpen],
+    [activeIndex, setActiveId, ...hotkeysDeps],
     { enabled: hotkeysEnable },
   )
   useHotkeys(
@@ -38,13 +39,13 @@ export function useTodoListKeybindings(todos: Todo[], activeIndex: number) {
       const next = activeIndex > 0 ? activeIndex - 1 : todos.length - 1
       setActiveId(todos[next].id)
     },
-    [activeIndex, todos, setActiveId, todoOpen, menuOpen, editMode, sidebarOpen],
+    [activeIndex, setActiveId, ...hotkeysDeps],
     { enabled: hotkeysEnable },
   )
-  useHotkeys(window, 'KeyI', () => setTodoOpen('edit'), [todoOpen, menuOpen, editMode, sidebarOpen], {
+  useHotkeys(window, 'KeyI', () => setTodoOpen('edit'), hotkeysDeps, {
     enabled: hotkeysEnable,
   })
-  useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos, menuOpen, editMode, sidebarOpen], {
+  useHotkeys(window, 'G', () => setActiveId(todos[0].id), hotkeysDeps, {
     enabled: hotkeysEnable,
   })
   useHotkeys(
@@ -54,9 +55,10 @@ export function useTodoListKeybindings(todos: Todo[], activeIndex: number) {
       deleteActiveTodo()
       moveActiveOnPrevTodoDone()
     },
-    [menuOpen, editMode, sidebarOpen],
+    hotkeysDeps,
     { enabled: hotkeysEnable },
   )
+
   useHotkeys(
     window,
     'd',
@@ -66,19 +68,18 @@ export function useTodoListKeybindings(todos: Todo[], activeIndex: number) {
         toggleDone(activeTodo.id)
       }
     },
-    [activeTodo, menuOpen, editMode, sidebarOpen],
+    hotkeysDeps,
     {
       enabled: hotkeysEnable,
     },
   )
-  useHotkeys(window, 'KeyS', () => toggleShowDone(), [menuOpen, editMode, sidebarOpen], {
-    enabled: hotkeysEnable,
-  })
-  useHotkeys(window, 'KeyO', () => setTodoOpen('add'), [todoOpen, editMode, sidebarOpen], {
-    enabled: hotkeysEnable,
-  })
 
-  useHotkeys(window, 'Escape', () => setTodoOpen(false), [todoOpen, editMode, sidebarOpen], {
+  useHotkeys(window, 'KeyS', () => toggleShowDone(), hotkeysDeps, { enabled: hotkeysEnable })
+
+  useHotkeys(window, 'KeyO', () => setTodoOpen('add'), hotkeysDeps, {
+    enabled: hotkeysEnable,
+  })
+  useHotkeys(window, 'Escape', () => setTodoOpen(false), hotkeysDeps, {
     enabled: !!todoOpen && editMode === 'normal',
   })
 

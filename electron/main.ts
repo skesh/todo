@@ -31,8 +31,8 @@ let win: BrowserWindow | null
 
 function createWindow() {
   win = new BrowserWindow({
-    // titleBarStyle: 'hidden',
-    // trafficLightPosition: { x: 15, y: 15 },
+    titleBarStyle: 'default',
+    trafficLightPosition: { x: 15, y: 15 },
     frame: false,
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
