@@ -1,13 +1,24 @@
+import { isAfter, parse } from 'date-fns'
+import { useEffect, useState } from 'react'
+import type { Todo } from 'src/interfaces/todo'
+import { DATE_FORMAT } from '@/config/config'
 import useGlobalKeybindings from '@/keybindings/global-keybindings'
 import { useTodoSelectors } from '@/store/todosStore'
 import TodoList from '../Todo/TodoList'
 
 export default function PageHome() {
   const { todos, showDone } = useTodoSelectors()
+  const [homeTodos, setHomeTodos] = useState<Todo[]>([])
 
   useGlobalKeybindings()
 
-  const homeTodos = showDone ? todos : todos.filter((t) => !t.done)
+  useEffect(() => {
+    setHomeTodos(
+      todos
+        .filter((t) => (showDone ? t : !t.done))
+        .filter((t) => (t.date ? isAfter(new Date(), parse(t.date, DATE_FORMAT, new Date())) : t)),
+    )
+  }, [todos, showDone])
 
   return (
     <div className="flex flex-col flex-1">
