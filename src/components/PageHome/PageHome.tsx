@@ -16,7 +16,8 @@ export default function PageHome() {
     setHomeTodos(
       todos
         .filter((t) => (showDone ? t : !t.done))
-        .filter((t) => (t.date ? isAfter(new Date(), parse(t.date, DATE_FORMAT, new Date())) : t)),
+        .filter((t) => (t.date ? isAfter(new Date(), parse(t.date, DATE_FORMAT, new Date())) : t))
+        .filter((t) => t.dependsOn.every((depId) => todos.find((t) => t.id === depId)?.done)),
     )
   }, [todos, showDone])
 

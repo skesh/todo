@@ -14,12 +14,20 @@ export default function useGlobalKeybindings() {
       const now = Date.now()
       const timeDiff = now - lastTimeRef.current
 
-      if (e.key === 'h' && lastKeyRef.current === ',' && timeDiff < 300) {
+      if (
+        (e.key === 'h' || e.key === 'р') &&
+        (lastKeyRef.current === ',' || lastKeyRef.current === 'б') &&
+        timeDiff < 300
+      ) {
         navigate('/')
         return
       }
 
-      if (e.key === 'f' && lastKeyRef.current === ',' && timeDiff < 500) {
+      if (
+        (e.key === 'f' || e.key === 'а') &&
+        (lastKeyRef.current === ',' || lastKeyRef.current === 'б') &&
+        timeDiff < 500
+      ) {
         toggleMenu()
         return
       }
