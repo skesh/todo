@@ -2,14 +2,14 @@ import { useRef } from 'react'
 import { useHotkeys } from '@/hooks/useHotkeys'
 import type { Todo } from '@/interfaces/todo'
 import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
-import { useUiActions, useUiSeletors } from '@/store/uiStore'
+import { useUiActions, useUiSelectors } from '@/store/uiStore'
 
 export function useTodoListKeybindings(todos: Todo[], activeIndex: number) {
   const lastKeyJPressAtRef = useRef(0)
   const { activeTodo, showDone } = useTodoSelectors()
   const { setActiveId, deleteActiveTodo, toggleDone, toggleShowDone } = useTodoActions()
   const { setTodoOpen } = useUiActions()
-  const { menuOpen, editMode, todoOpen } = useUiSeletors()
+  const { menuOpen, editMode, todoOpen } = useUiSelectors()
 
   useHotkeys(
     window,
@@ -45,24 +45,9 @@ export function useTodoListKeybindings(todos: Todo[], activeIndex: number) {
   useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos, menuOpen, editMode], {
     enabled: !todoOpen && !menuOpen && editMode === 'normal',
   })
-  useHotkeys(window, 'П', () => setActiveId(todos[0].id), [todos, menuOpen, editMode], {
-    enabled: !todoOpen && !menuOpen && editMode === 'normal',
-  })
   useHotkeys(
     window,
     'D',
-    () => {
-      deleteActiveTodo()
-      moveActiveOnPrevTodoDone()
-    },
-    [menuOpen, editMode],
-    {
-      enabled: !todoOpen && !menuOpen && editMode === 'normal',
-    },
-  )
-  useHotkeys(
-    window,
-    'Д',
     () => {
       deleteActiveTodo()
       moveActiveOnPrevTodoDone()
@@ -88,6 +73,13 @@ export function useTodoListKeybindings(todos: Todo[], activeIndex: number) {
   )
   useHotkeys(window, 'KeyS', () => toggleShowDone(), [menuOpen, editMode], {
     enabled: !todoOpen && !menuOpen && editMode === 'normal',
+  })
+  useHotkeys(window, 'KeyO', () => setTodoOpen('add'), [todoOpen, editMode], {
+    enabled: !todoOpen && editMode === 'normal',
+  })
+
+  useHotkeys(window, 'Escape', () => setTodoOpen(false), [todoOpen, editMode], {
+    enabled: !!todoOpen && editMode === 'normal',
   })
 
   function moveActiveOnPrevTodoDone() {

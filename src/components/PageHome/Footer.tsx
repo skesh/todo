@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils'
 import { useTodoSelectors } from '@/store/todosStore'
-import { useUiSeletors } from '@/store/uiStore'
+import { useUiSelectors } from '@/store/uiStore'
 
 export default function Footer() {
   const { todos, activeTodo, showDone } = useTodoSelectors()
-  const { editMode } = useUiSeletors()
+  const { editMode } = useUiSelectors()
 
   return (
     <div className="sticky bottom-0 flex w-full shrink-0 gap-2 bg-background items-center">

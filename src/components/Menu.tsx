@@ -15,10 +15,10 @@ import {
 } from '@/components/ui/command'
 import { Project } from '@/interfaces/project'
 import { useProjectActions, useProjectSelectors } from '@/store/projectsStore'
-import { useUiActions, useUiSeletors } from '@/store/uiStore'
+import { useUiActions, useUiSelectors } from '@/store/uiStore'
 
 export function CommandMenu() {
-  const { menuOpen } = useUiSeletors()
+  const { menuOpen } = useUiSelectors()
   const { toggleMenu } = useUiActions()
   const { projects } = useProjectSelectors()
   const { addProject, deleteById } = useProjectActions()

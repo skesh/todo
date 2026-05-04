@@ -31,7 +31,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   setMode: (editMode: UIState['editMode']) => get().editMode !== editMode && set({ editMode }),
 }))
 
-export const useUiSeletors = () =>
+export const useUiSelectors = () =>
   useUIStore(
     useShallow((s) => ({
       sidebarOpen: s.sidebarOpen,

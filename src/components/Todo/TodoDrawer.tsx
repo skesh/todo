@@ -1,16 +1,14 @@
 import { useMemo } from 'react'
-import { useHotkeys } from '@/hooks/useHotkeys'
 import { Todo } from '@/interfaces/todo'
 import { useProjectSelectors } from '@/store/projectsStore'
 import { useTodoSelectors } from '@/store/todosStore'
-import { useUiActions, useUiSeletors } from '@/store/uiStore'
+import { useUiSelectors } from '@/store/uiStore'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '../ui/drawer'
 import EditTodo from './EditTodo'
 
 export default function TodoDrawer() {
   const { activeTodo } = useTodoSelectors()
-  const { todoOpen, editMode } = useUiSeletors()
-  const { setTodoOpen } = useUiActions()
+  const { todoOpen } = useUiSelectors()
   const { activeProjectId } = useProjectSelectors()
 
   const initialTodo = useMemo(() => {
@@ -19,14 +17,6 @@ export default function TodoDrawer() {
     }
     return new Todo({ projectId: activeProjectId ?? '' })
   }, [todoOpen, activeTodo, activeProjectId])
-
-  useHotkeys(window, 'o', () => setTodoOpen('add'), [todoOpen, editMode], {
-    enabled: !todoOpen && editMode === 'normal',
-  })
-
-  useHotkeys(window, 'Escape', () => setTodoOpen(false), [todoOpen, editMode], {
-    enabled: !!todoOpen && editMode === 'normal',
-  })
 
   return (
     <Drawer open={!!todoOpen}>
