@@ -1,0 +1,98 @@
+import { useRef } from 'react'
+import { useHotkeys } from '@/hooks/useHotkeys'
+import type { Todo } from '@/interfaces/todo'
+import { useTodoActions, useTodoSelectors } from '@/store/todosStore'
+import { useUiActions, useUiSeletors } from '@/store/uiStore'
+
+export function useTodoListKeybindings(todos: Todo[], activeIndex: number) {
+  const lastKeyJPressAtRef = useRef(0)
+  const { activeTodo, showDone } = useTodoSelectors()
+  const { setActiveId, deleteActiveTodo, toggleDone, toggleShowDone } = useTodoActions()
+  const { setTodoOpen } = useUiActions()
+  const { menuOpen, editMode, todoOpen } = useUiSeletors()
+
+  useHotkeys(
+    window,
+    'KeyJ',
+    () => {
+      if (todos.length === 0) return
+      const now = Date.now()
+      if (now - lastKeyJPressAtRef.current < 100) return
+      lastKeyJPressAtRef.current = now
+      const next = activeIndex < todos.length - 1 && activeIndex !== -1 ? activeIndex + 1 : 0
+      setActiveId(todos[next].id)
+    },
+    [activeIndex, todos, setActiveId, todoOpen, menuOpen, editMode],
+    { enabled: !todoOpen && !menuOpen && editMode === 'normal' },
+  )
+  useHotkeys(
+    window,
+    'KeyK',
+    () => {
+      if (todos.length === 0) return
+      const now = Date.now()
+      if (now - lastKeyJPressAtRef.current < 100) return
+      lastKeyJPressAtRef.current = now
+      const next = activeIndex > 0 ? activeIndex - 1 : todos.length - 1
+      setActiveId(todos[next].id)
+    },
+    [activeIndex, todos, setActiveId, todoOpen, menuOpen, editMode],
+    { enabled: !todoOpen && !menuOpen && editMode === 'normal' },
+  )
+  useHotkeys(window, 'KeyI', () => setTodoOpen('edit'), [todoOpen, menuOpen, editMode], {
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
+  })
+  useHotkeys(window, 'G', () => setActiveId(todos[0].id), [todos, menuOpen, editMode], {
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
+  })
+  useHotkeys(window, 'П', () => setActiveId(todos[0].id), [todos, menuOpen, editMode], {
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
+  })
+  useHotkeys(
+    window,
+    'D',
+    () => {
+      deleteActiveTodo()
+      moveActiveOnPrevTodoDone()
+    },
+    [menuOpen, editMode],
+    {
+      enabled: !todoOpen && !menuOpen && editMode === 'normal',
+    },
+  )
+  useHotkeys(
+    window,
+    'Д',
+    () => {
+      deleteActiveTodo()
+      moveActiveOnPrevTodoDone()
+    },
+    [menuOpen, editMode],
+    {
+      enabled: !todoOpen && !menuOpen && editMode === 'normal',
+    },
+  )
+  useHotkeys(
+    window,
+    'd',
+    () => {
+      if (activeTodo) {
+        moveActiveOnPrevTodoDone()
+        toggleDone(activeTodo.id)
+      }
+    },
+    [activeTodo, menuOpen, editMode],
+    {
+      enabled: !todoOpen && !menuOpen && editMode === 'normal',
+    },
+  )
+  useHotkeys(window, 'KeyS', () => toggleShowDone(), [menuOpen, editMode], {
+    enabled: !todoOpen && !menuOpen && editMode === 'normal',
+  })
+
+  function moveActiveOnPrevTodoDone() {
+    if (activeTodo?.done || showDone) return
+    const index = todos.findIndex((t) => t.id === activeTodo?.id)
+    if (index && index > 0) setActiveId(todos[index - 1].id)
+  }
+}
